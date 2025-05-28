@@ -1,6 +1,10 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { verifyOtp } from "../../api/api";
+import { Alert } from "../ui/alert";
+import { Toaster } from "../ui/sonner"
+import { toast } from "sonner"
+
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
@@ -38,8 +42,10 @@ const VerifyOtp = () => {
       const response = await verifyOtp(email, finalOtp);
       if (response?.status === 201) {
         navigate("/user/login");
+        console.log('dont go ok ?');
+        
       } else {
-        alert("OTP verification failed");
+        toast("OTP verification failed");
       }
     } catch (error) {
       console.error("OTP verification error:", error);
@@ -73,7 +79,7 @@ const VerifyOtp = () => {
 
         <button
           onClick={() => handleSubmit(otp.join(""))}
-          className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-md transition-transform duration-300 transform hover:scale-105 text-sm"
+          className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-md  text-sm"
         >
           Verify OTP
         </button>

@@ -5,25 +5,53 @@ import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
 import { Input } from "../common/Input";
 
-
 const Signup = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: "",
+    userName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" })); // Clear error on change
+  };
+
+  const validateForm = () => {
+    const { userName, email, password, confirmPassword } = formData;
+    const errors: { [key: string]: string } = {};
+
+    if (!userName.trim()) errors.userName = "Name is required";
+    if (!email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Invalid email format";
+    }
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     try {
       const response = await signup(formData);
@@ -38,7 +66,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4 font-sans text-sm">
       <div className="w-full max-w-6xl flex flex-col md:flex-row items-center gap-8 bg-black/70 backdrop-blur-md p-8 rounded-2xl border border-gray-700 shadow-2xl">
-
+        
         {/* Lottie Animation */}
         <div className="w-full md:w-1/2">
           <Lottie animationData={loginanime} loop={true} className="w-full h-auto max-h-[500px]" />
@@ -53,18 +81,30 @@ const Signup = () => {
             Dive into the future of learning. Sign up now 
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex gap-4">
-              <Input name="firstName" placeholder="Name" onChange={handleChange} />
-              {/* <Input name="lastName" placeholder="Last Name" onChange={handleChange} /> */}
+          <form onSubmit={handleSubmit} noValidate  className="space-y-4">
+            <div>
+              <Input name="userName" placeholder="Name" onChange={handleChange} />
+              {errors.userName && <p className="text-red-500 text-xs mt-1">{errors.userName}</p>}
             </div>
-            <Input type="email" name="email" placeholder="Email" onChange={handleChange} />
-            <Input type="password" name="password" placeholder="Password" onChange={handleChange} />
-            <Input  type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+
+            <div>
+              <Input type="email" name="email" placeholder="Email" onChange={handleChange} />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            </div>
+
+            <div>
+              <Input type="password" name="password" placeholder="Password" onChange={handleChange} />
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+            </div>
+
+            <div>
+              <Input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+            </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-lg "
+              className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-lg"
             >
               Create Account
             </button>
@@ -86,17 +126,14 @@ const Signup = () => {
 
           <p className="mt-6 text-center text-xs text-gray-500">
             Already have an account?{" "}
-            <a href="/login" className="text-cyan-400 hover:underline font-medium">
+            <a href="/user/login" className="text-cyan-400 hover:underline font-medium">
               Sign in
             </a>
           </p>
         </div>
-
       </div>
     </div>
   );
 };
-
-
 
 export default Signup;

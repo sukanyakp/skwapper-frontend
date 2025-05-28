@@ -21,7 +21,7 @@ export const signup  = async(formData : Object)=>{
 export const verifyOtp = async (email:string ,otp:string) =>{
   try {
     const res = await api.post(`/verify-otp`,{ email , otp })
-    console.log(res);
+    console.log(res.status , res.data ,'verifying otp in the backend');
     return ({status : res.status , data : res.data})
   } catch (error) {
     console.log(error);
