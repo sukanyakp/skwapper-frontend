@@ -1,87 +1,124 @@
 import { Link } from "react-router-dom";
+import Navbar from "../common/Navbar";
+import Footer from "../common/Footer";
+import learn from '../../assets/Anime/learn.json';
+import Lottie from "lottie-react";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white font-sans">
-      
       {/* Navbar */}
-      <nav className="flex justify-between items-center px-6 py-4 border-b border-gray-700 bg-black/80 backdrop-blur-md">
-        <h1 className="text-2xl font-bold text-cyan-400">Skwapper</h1>
-        <div className="space-x-4">
-          <Link to="/login" className="text-sm hover:text-cyan-400">Login</Link>
-          <Link to="/signup" className="text-sm px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg">Get Started</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <header className="flex flex-col-reverse md:flex-row items-center justify-between px-8 md:px-16 py-20 gap-10">
         <div className="md:w-1/2 text-center md:text-left">
           <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
-            Empower Your Learning Journey
+            Learn Music from Anywhere
           </h2>
           <p className="text-gray-400 text-sm md:text-base mb-6">
-            Skwapper is your gateway to smarter, simpler, and more engaging education. Learn at your pace, anytime, anywhere.
+            Master instruments like Guitar, Piano, Drums, Violin, and more through online lessons from expert tutors.
           </p>
-          <Link to="/signup">
+          <Link to="/user/signup">
             <button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium px-6 py-3 rounded-xl shadow-md transition-transform transform hover:scale-105 text-sm">
-              Start Learning Now
+              Start Learning Music
             </button>
           </Link>
         </div>
-        <div className="md:w-1/2">
-          <img
-            src="https://cdni.iconscout.com/illustration/premium/thumb/online-education-3870235-3224630.png"
-            alt="Learning"
-            className="w-full max-w-md mx-auto"
-          />
+
+        {/* Lottie Animation */}
+        <div className="w-full md:w-1/2">
+          <Lottie animationData={learn} loop={true} className="w-full h-auto max-h-[380px]" />
         </div>
       </header>
 
       {/* Features Section */}
       <section className="px-8 md:px-16 py-16 bg-gray-900">
         <h3 className="text-2xl md:text-3xl font-semibold text-center mb-10">
-          Why Choose Skwapper?
+          Why Learn Music with Us?
         </h3>
         <div className="grid md:grid-cols-3 gap-10 text-center">
           <Feature
-            title="Interactive Lessons"
-            description="Engage with dynamic content, quizzes, and projects to truly grasp concepts."
-            icon="🎯"
+            title="Live & Recorded Classes"
+            description="Attend live sessions or learn at your own pace with high-quality recorded lessons."
+            icon="🎼"
           />
           <Feature
-            title="Progress Tracking"
-            description="Stay motivated with real-time feedback and personalized progress reports."
-            icon="📊"
+            title="Instrument-Specific Training"
+            description="Choose from Guitar, Piano, Drums, Violin, Vocals, and more."
+            icon="🎸"
           />
           <Feature
-            title="Expert Support"
-            description="Our mentors and community are here to guide you every step of the way."
-            icon="💡"
+            title="Learn from Experts"
+            description="Our experienced musicians will guide you from beginner to pro."
+            icon="👨‍🏫"
           />
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA Section */}
       <section className="px-8 md:px-16 py-16 text-center bg-gradient-to-r from-cyan-600 to-blue-600">
-        <h4 className="text-xl md:text-2xl font-semibold mb-4">Join Thousands of Learners</h4>
+        <h4 className="text-xl md:text-2xl font-semibold mb-4">
+          Join Thousands of Aspiring Musicians
+        </h4>
         <p className="text-white/80 text-sm mb-6">
-          Begin your journey to mastery with Skwapper today.
+          Start your musical journey with professional guidance and creative learning.
         </p>
-        <Link to="/signup">
+        <Link to="/user/signup">
           <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition">
             Get Started for Free
           </button>
         </Link>
       </section>
 
+      {/* Top Related Courses Section */}
+      <section className="px-8 md:px-16 py-16 bg-gray-950">
+        <h3 className="text-2xl md:text-3xl font-semibold text-center mb-10 text-white">
+          Top Related Courses
+        </h3>
+        <div className="grid gap-8 md:grid-cols-3">
+          {topCourses.map((course, idx) => (
+            <CourseCard key={idx} course={course} />
+          ))}
+        </div>
+      </section>
+
+      {/* Best Selling Courses Section */}
+      <section className="px-8 md:px-16 py-16 bg-gray-900">
+        <h3 className="text-2xl md:text-3xl font-semibold text-center mb-10 text-white">
+          Best Selling Courses
+        </h3>
+        <div className="grid gap-8 md:grid-cols-3">
+          {bestSellers.map((course, idx) => (
+            <CourseCard key={idx} course={course} />
+          ))}
+        </div>
+      </section>
+
+
+ <section className="px-8 md:px-16 py-16 text-center bg-gradient-to-r from-cyan-600 to-blue-600">
+  <h3 className="text-2xl md:text-3xl font-semibold mb-4">
+    Want to Teach Music?
+  </h3>
+  <p className="text-white/80 text-sm md:text-base mb-6 max-w-xl mx-auto">
+    Share your musical skills with students across the world. Join our platform as a tutor and start teaching online.
+  </p>
+  <Link to="/tutor/signup">
+    <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition text-sm">
+      Become a Tutor
+    </button>
+  </Link>
+</section>
+
+
+
       {/* Footer */}
-      <footer className="text-center py-6 text-gray-500 text-sm border-t border-gray-700">
-        &copy; {new Date().getFullYear()} Skwapper. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 };
 
+// Feature Component
 const Feature = ({
   title,
   description,
@@ -97,5 +134,60 @@ const Feature = ({
     <p className="text-sm text-gray-400">{description}</p>
   </div>
 );
+
+// CourseCard Component
+const CourseCard = ({ course }: { course: any }) => (
+  <div className="bg-black/80 p-5 rounded-xl border border-gray-700 hover:shadow-xl transition">
+    <div className="h-40 bg-gray-700 rounded-lg mb-4 flex items-center justify-center text-white text-sm">
+      {/* Placeholder thumbnail */}
+      Thumbnail Image
+    </div>
+    <h4 className="text-lg font-semibold mb-1">{course.title}</h4>
+    <p className="text-sm text-gray-400 mb-2">By {course.instructor}</p>
+    <span className="inline-block bg-cyan-700 text-xs px-2 py-1 rounded-full mb-3">
+      {course.category}
+    </span>
+    <button className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2 text-sm rounded-md">
+      Enroll Now
+    </button>
+  </div>
+);
+
+// Sample Data
+const topCourses = [
+  {
+    title: "Beginner Guitar Essentials",
+    instructor: "John Mayer",
+    category: "Guitar",
+  },
+  {
+    title: "Learn Piano in 30 Days",
+    instructor: "Emily Clarke",
+    category: "Piano",
+  },
+  {
+    title: "Mastering Classical Vocals",
+    instructor: "Ravi Kumar",
+    category: "Vocals",
+  },
+];
+
+const bestSellers = [
+  {
+    title: "Hip-Hop Dance Basics",
+    instructor: "Liza Johnson",
+    category: "Dance",
+  },
+  {
+    title: "Bollywood Dance Groove",
+    instructor: "Ritika Sharma",
+    category: "Dance",
+  },
+  {
+    title: "Complete Violin Guide",
+    instructor: "Sarah Lee",
+    category: "Violin",
+  },
+];
 
 export default Home;
