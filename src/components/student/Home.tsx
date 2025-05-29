@@ -19,7 +19,7 @@ const Home = () => {
           <p className="text-gray-400 text-sm md:text-base mb-6">
             Master instruments like Guitar, Piano, Drums, Violin, and more through online lessons from expert tutors.
           </p>
-          <Link to="/user/signup">
+          <Link to="/signup">
             <button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium px-6 py-3 rounded-xl shadow-md transition-transform transform hover:scale-105 text-sm">
               Start Learning Music
             </button>
@@ -64,7 +64,7 @@ const Home = () => {
         <p className="text-white/80 text-sm mb-6">
           Start your musical journey with professional guidance and creative learning.
         </p>
-        <Link to="/user/signup">
+        <Link to="/signup">
           <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition">
             Get Started for Free
           </button>

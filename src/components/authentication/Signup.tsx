@@ -9,7 +9,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    userName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -24,10 +24,10 @@ const Signup = () => {
   };
 
   const validateForm = () => {
-    const { userName, email, password, confirmPassword } = formData;
+    const { name, email, password, confirmPassword } = formData;
     const errors: { [key: string]: string } = {};
 
-    if (!userName.trim()) errors.userName = "Name is required";
+    if (!name.trim()) errors.name = "Name is required";
     if (!email.trim()) {
       errors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
@@ -56,7 +56,7 @@ const Signup = () => {
     try {
       const response = await signup(formData);
       if (response?.status === 200) {
-        navigate("/user/verify-otp", { state: { email: formData.email } });
+        navigate("/verify-otp", { state: { email: formData.email } });
       }
     } catch (error) {
       console.error("Signup failed:", error);
@@ -83,8 +83,8 @@ const Signup = () => {
 
           <form onSubmit={handleSubmit} noValidate  className="space-y-4">
             <div>
-              <Input name="userName" placeholder="Name" onChange={handleChange} />
-              {errors.userName && <p className="text-red-500 text-xs mt-1">{errors.userName}</p>}
+              <Input name="name" placeholder="Name" onChange={handleChange} />
+              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
             </div>
 
             <div>
@@ -126,7 +126,7 @@ const Signup = () => {
 
           <p className="mt-6 text-center text-xs text-gray-500">
             Already have an account?{" "}
-            <a href="/user/login" className="text-cyan-400 hover:underline font-medium">
+            <a href="/login" className="text-cyan-400 hover:underline font-medium">
               Sign in
             </a>
           </p>

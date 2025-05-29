@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { data } from 'react-router-dom';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/user',
+  baseURL: 'http://localhost:3000',
   withCredentials: true
 });
 
@@ -32,8 +31,13 @@ export const verifyOtp = async (email:string ,otp:string) =>{
 export const login = async(formData : object) =>{
   try {
 
-    const res = await api.post(`/login`,{formData})
-    console.log(res);
+    const res = await api.post(`/login`,formData)
+   console.log(' heere we are in api login ');
+   const  {accessToken , refreshToken , user}  = res.data
+   console.log(accessToken , 'accessToken');
+   
+   localStorage.setItem(accessToken,'accessToken')
+   
     return ({status : res.status, data : res.data})
     
   } catch (error) {
