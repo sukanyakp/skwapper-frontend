@@ -48,7 +48,7 @@ const Login = () => {
     try {
       const response = await login(formData);
       if (response?.status === 200) {
-        navigate("/user/dashboard");
+        navigate("/dashboard");
       }
     } catch (error) {
       setErrors({ general: "Invalid email or password" });
@@ -73,8 +73,9 @@ const Login = () => {
           <p className="text-gray-400 mb-6 text-xs">
             Enter your credentials to access your account
           </p>
+      
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">     {/* noValidate */}
             <div>
               <Input type="email" name="email" placeholder="Email" onChange={handleChange} />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -111,7 +112,7 @@ const Login = () => {
 
           <p className="mt-6 text-center text-xs text-gray-500">
             Don’t have an account?{" "}
-            <a href="/user/signup" className="text-cyan-400 hover:underline font-medium">
+            <a href="/signup" className="text-cyan-400 hover:underline font-medium">
               Create one
             </a>
           </p>

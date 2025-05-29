@@ -41,7 +41,7 @@ const VerifyOtp = () => {
     try {
       const response = await verifyOtp(email, finalOtp);
       if (response?.status === 201) {
-        navigate("/user/login");
+        navigate("/login");
         console.log('dont go ok ?');
         
       } else {
