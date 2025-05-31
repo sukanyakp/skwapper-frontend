@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { verifyOtp } from "../../api/api";
-import { Alert } from "../ui/alert";
-import { Toaster } from "../ui/sonner"
 import { toast } from "sonner"
 
 

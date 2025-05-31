@@ -48,7 +48,7 @@ const Login = () => {
     try {
       const response = await login(formData);
       if (response?.status === 200) {
-        navigate("/dashboard");
+        navigate("/");
       }
     } catch (error) {
       setErrors({ general: "Invalid email or password" });
@@ -83,7 +83,15 @@ const Login = () => {
 
             <div>
               <Input type="password" name="password" placeholder="Password" onChange={handleChange} />
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              
+
+              <div  className="flex justify-between  items-center">
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                <a href="/forgot-password"  className="text-sx text-cyan-400  hover:underline ml-auto">
+                 Forgot Password?
+                </a>
+
+              </div>
             </div>
 
             {errors.general && <p className="text-red-500 text-xs mt-1">{errors.general}</p>}

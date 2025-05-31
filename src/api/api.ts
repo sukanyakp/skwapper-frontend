@@ -13,7 +13,6 @@ export const signup  = async(formData : Object)=>{
 } catch (error) {
     console.error(error); 
 }
-
 }
 
 
@@ -33,17 +32,43 @@ export const login = async(formData : object) =>{
 
     const res = await api.post(`/login`,formData)
    console.log(' heere we are in api login ');
-   const  {accessToken , refreshToken , user}  = res.data
-   console.log(accessToken , 'accessToken');
+   const  { token }  = res.data
+   console.log(token , 'accessToken');
    
-   localStorage.setItem(accessToken,'accessToken')
+   localStorage.setItem(token,'accessToken')
    
     return ({status : res.status, data : res.data})
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export const sendResetRequest  = async (email : string) =>{
+  try {
+
+    const res = await api.post('/forgot-password' ,{email})
+    console.log(res , 'last of forgot password');
+       return { status: res.status, data: res.data };
     
   } catch (error) {
     console.log(error);
     
   }
 }
+
+
+export const resetPassword = async (token: string | undefined, password: string) => {
+  try {
+    const res = await api.post(`/reset-password/${token}`, {
+      password,
+    });
+    return res;
+  } catch (error) {
+    console.error("Reset password error:", error);
+    throw error;
+  }
+};
 
 export default api;
