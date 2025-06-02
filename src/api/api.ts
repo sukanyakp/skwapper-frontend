@@ -30,7 +30,7 @@ export const verifyOtp = async (email:string ,otp:string) =>{
 export const login = async(formData : object) =>{
   try {
 
-    const res = await api.post(`/login`,formData)
+   const res = await api.post(`/login`,formData)
    console.log(' heere we are in api login ');
    const  { token }  = res.data
    console.log(token , 'accessToken');
@@ -70,5 +70,20 @@ export const resetPassword = async (token: string | undefined, password: string)
     throw error;
   }
 };
+
+export const resendOtp = async (email : string)=>{
+  try {
+
+    const res = await api.post(`/resend-otp`,{email})
+    console.log('got the message from resendOtp');
+    
+    return res
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
 
 export default api;

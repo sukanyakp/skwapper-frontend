@@ -4,6 +4,7 @@ import { signup } from "../../api/api";
 import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
 import { Input } from "../common/Input";
+import { ClipLoader } from "react-spinners"; // for loading spinner
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -16,11 +17,12 @@ const Signup = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false); // ✅ loading state
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" })); // Clear error on change
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
@@ -53,6 +55,7 @@ const Signup = () => {
       return;
     }
 
+    setLoading(true); //loading
     try {
       const response = await signup(formData);
       if (response?.status === 200) {
@@ -60,6 +63,8 @@ const Signup = () => {
       }
     } catch (error) {
       console.error("Signup failed:", error);
+    } finally {
+      setLoading(false); // hide loading
     }
   };
 
@@ -81,7 +86,7 @@ const Signup = () => {
             Dive into the future of learning. Sign up now 
           </p>
 
-          <form onSubmit={handleSubmit} noValidate  className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <Input name="name" placeholder="Name" onChange={handleChange} />
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -104,9 +109,10 @@ const Signup = () => {
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-lg"
+              disabled={loading}
+              className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-lg flex justify-center items-center gap-2"
             >
-              Create Account
+              {loading ? <ClipLoader size={20} color="white" /> : "Create Account"}
             </button>
           </form>
 

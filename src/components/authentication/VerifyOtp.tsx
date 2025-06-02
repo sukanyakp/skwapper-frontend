@@ -1,17 +1,24 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { verifyOtp } from "../../api/api";
-import { toast } from "sonner"
-
+import { verifyOtp, resendOtp } from "../../api/api";
+import { toast } from "sonner";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const email = location.state?.email;
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [timer, setTimer] = useState(60);
+  const [resendCooldown, setResendCooldown] = useState(false);
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -39,14 +46,34 @@ const VerifyOtp = () => {
     try {
       const response = await verifyOtp(email, finalOtp);
       if (response?.status === 201) {
+        toast.success("OTP verified successfully");
         navigate("/login");
-        console.log('dont go ok ?');
-        
       } else {
-        toast("OTP verification failed");
+        toast.error("Invalid OTP");
       }
     } catch (error) {
       console.error("OTP verification error:", error);
+      toast.error("Verification failed");
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email || resendCooldown) return;
+    try {
+      setResendCooldown(true);
+      await resendOtp(email);
+      toast.success("OTP has been resent!");
+      setOtp(Array(6).fill(""));
+      inputRefs.current[0]?.focus();
+      setTimer(60);
+
+      setTimeout(() => {
+        setResendCooldown(false);
+      }, 30000); // 30s cooldown
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      toast.error("Failed to resend OTP");
+      setResendCooldown(false);
     }
   };
 
@@ -69,7 +96,7 @@ const VerifyOtp = () => {
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              ref={(el) => (inputRefs.current[index] = el)}
+              ref ={(el) => (inputRefs.current[index] = el)}
               className="w-10 h-12 text-xl text-white text-center bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
           ))}
@@ -77,10 +104,26 @@ const VerifyOtp = () => {
 
         <button
           onClick={() => handleSubmit(otp.join(""))}
-          className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-md  text-sm"
+          className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white font-medium rounded-lg shadow-md text-sm"
         >
           Verify OTP
         </button>
+
+        {timer > 0 ? (
+          <p className="text-xs text-gray-400 mt-4">
+            Resend OTP in <span className="text-white">{timer}</span> seconds
+          </p>
+        ) : (
+          <button
+            onClick={handleResend}
+            disabled={resendCooldown}
+            className={`mt-4 text-cyan-400 hover:underline text-xs ${
+              resendCooldown ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            Resend OTP
+          </button>
+        )}
       </div>
     </div>
   );
