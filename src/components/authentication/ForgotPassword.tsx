@@ -30,6 +30,10 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-black px-4">
+        {/* Skwapper Branding */}
+      <div className="absolute top-4 left-4 text-cyan-400 text-sm font-semibold tracking-widest">
+        Skwapper
+      </div>
       <form onSubmit={handleSubmit} className="bg-gray-900 p-6 rounded-lg shadow-lg text-white w-full max-w-md space-y-4">
         <h2 className="text-xl font-bold">Forgot Password</h2>
         <p className="text-sm text-gray-400">

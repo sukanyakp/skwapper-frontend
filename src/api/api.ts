@@ -74,6 +74,8 @@ export const resetPassword = async (token: string | undefined, password: string)
 export const resendOtp = async (email : string)=>{
   try {
 
+    console.log('intialising resendOtp');
+    
     const res = await api.post(`/resend-otp`,{email})
     console.log('got the message from resendOtp');
     

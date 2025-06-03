@@ -78,7 +78,12 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4 relative">
+      {/* Skwapper Branding */}
+      <div className="absolute top-4 left-4 text-cyan-400 text-sm font-semibold tracking-widest">
+        Skwapper
+      </div>
+
       <div className="bg-black/80 border border-gray-700 p-10 rounded-2xl shadow-xl text-center w-full max-w-md">
         <h2 className="text-2xl font-semibold text-white mb-2 tracking-wide">
           Verify Your <span className="text-cyan-400">Email</span>
@@ -96,7 +101,7 @@ const VerifyOtp = () => {
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              ref ={(el) => (inputRefs.current[index] = el)}
+              ref={(el) => (inputRefs.current[index] = el)}
               className="w-10 h-12 text-xl text-white text-center bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
           ))}

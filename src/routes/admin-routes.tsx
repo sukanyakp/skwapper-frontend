@@ -6,8 +6,8 @@ import { Route,Routes } from "react-router-dom"
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route   path="/login" element={<AdminLogin/>}/>
-      <Route  path="/register" element={<AdminRegister/>}/>
+      <Route  path="/login"     element={<AdminLogin/>}/>
+      <Route  path="/register"  element={<AdminRegister/>}/>
       <Route  path="/dashboard" element = {<Dashboard/>}/>
     </Routes>
   )
