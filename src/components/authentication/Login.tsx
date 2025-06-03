@@ -4,6 +4,7 @@ import { login } from "../../api/api";
 import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
 import { Input } from "../ui/input";
+import { formSchema } from "../../validations/authentication/login"; 
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,30 +19,21 @@ const Login = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" })); // Clear field-specific error on change
-  };
-
-  const validateLoginForm = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    }
-
-    return newErrors;
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationErrors = validateLoginForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    const result = formSchema.safeParse(formData); // safeParse instead of parse 
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as string;
+        fieldErrors[field] = err.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
@@ -73,28 +65,45 @@ const Login = () => {
           <p className="text-gray-400 mb-6 text-xs">
             Enter your credentials to access your account
           </p>
-      
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">     {/* noValidate */}
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
-              <Input type="email" name="email" placeholder="Email" onChange={handleChange} />
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                className=" text-white" 
+              />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
             <div>
-              <Input type="password" name="password" placeholder="Password" onChange={handleChange} />
-              
-
-              <div  className="flex justify-between  items-center">
-                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-                <a href="/forgot-password"  className="text-sx text-cyan-400  hover:underline ml-auto">
-                 Forgot Password?
+              <Input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className=" text-white" 
+              />
+              <div className="flex justify-between items-center">
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                )}
+                <a
+                  href="/forgot-password"
+                  className="text-sx text-cyan-400 hover:underline ml-auto"
+                >
+                  Forgot Password?
                 </a>
-
               </div>
             </div>
 
-            {errors.general && <p className="text-red-500 text-xs mt-1">{errors.general}</p>}
+            {errors.general && (
+              <p className="text-red-500 text-xs mt-1">{errors.general}</p>
+            )}
 
             <button
               type="submit"
@@ -114,7 +123,11 @@ const Login = () => {
             type="button"
             className="w-full flex items-center justify-center gap-3 border border-gray-700 rounded-lg py-2 bg-gray-900 hover:bg-gray-800 text-white transition text-sm"
           >
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
             Continue with Google
           </button>
 
@@ -125,7 +138,6 @@ const Login = () => {
             </a>
           </p>
         </div>
-
       </div>
     </div>
   );

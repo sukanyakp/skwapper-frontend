@@ -2,26 +2,33 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Input } from "../ui/input";
 import { resetPassword } from "../../api/api";
+import { resetPasswordSchema } from "../../validations/authentication/reset-password"; // update path if needed
 
 const ResetPassword = () => {
-  const { token } = useParams(); // Grab token from URL
+  const { token } = useParams();
+  const navigate = useNavigate();
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
+  const [apiError, setApiError] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    setApiError("");
+    setMessage("");
 
-    // Validation
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
+    const result = resetPasswordSchema.safeParse({ password, confirmPassword });
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!result.success) {
+      const fieldErrors: { password?: string; confirmPassword?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "password") fieldErrors.password = err.message;
+        if (err.path[0] === "confirmPassword") fieldErrors.confirmPassword = err.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
@@ -29,12 +36,11 @@ const ResetPassword = () => {
       const res = await resetPassword(token, password);
       if (res?.status === 200) {
         setMessage("Password reset successful!");
-        setError("");
-        setTimeout(() => navigate("/login"), 2000); // Redirect to login after 2 seconds
+        setTimeout(() => navigate("/login"), 2000);
       }
-    } catch (error) {
-      setError("Invalid or expired reset link.");
-      setMessage("");
+    } catch (err) {
+      console.error(err);
+      setApiError("Invalid or expired reset link.");
     }
   };
 
@@ -51,15 +57,20 @@ const ResetPassword = () => {
           placeholder="New Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className=" text-white" 
         />
+        {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
+
         <Input
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          className=" text-white" 
         />
+        {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword}</p>}
 
-        {error && <p className="text-red-500 text-xs">{error}</p>}
+        {apiError && <p className="text-red-500 text-xs">{apiError}</p>}
         {message && <p className="text-green-500 text-xs">{message}</p>}
 
         <button

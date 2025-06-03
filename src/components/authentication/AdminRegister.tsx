@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerAdmin } from "../../api/adminApi"
+import { Input } from "../ui/input";
 
 export default function AdminRegister() {
   const [name , setName] = useState("")  
@@ -36,7 +37,7 @@ export default function AdminRegister() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow w-full max-w-sm">
         <h2 className="text-xl font-bold mb-4 text-center">Admin Registration</h2>
-        <input 
+        <Input 
         type="text" 
         placeholder="name"
         value={name} 
@@ -45,7 +46,7 @@ export default function AdminRegister() {
         required
         />
 
-        <input
+        <Input
           type="email"
           placeholder="Email"
           value={email}
@@ -54,7 +55,7 @@ export default function AdminRegister() {
           required
         />
 
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={password}
@@ -63,7 +64,7 @@ export default function AdminRegister() {
           required
         />
 
-        <input
+        <Input
           type="password"
           placeholder="Confirm Password"
           value={confirm}
