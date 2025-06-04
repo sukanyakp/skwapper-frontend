@@ -4,6 +4,7 @@ import StudentRoutes from "./routes/student-routes"
 import AdminRoutes from "./routes/admin-routes"
 import { Provider } from "react-redux"
 import store from "./store/store"
+import TutorRoutes from "./routes/tutor-routes"
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
     <Routes>
       < Route  path="/*" element={<StudentRoutes/>}/>
       < Route  path="/admin/*" element={<AdminRoutes/>}/>
+      < Route  path="/tutor/*"  element = {<TutorRoutes/>}/>
    
     </Routes>
       </Provider>
