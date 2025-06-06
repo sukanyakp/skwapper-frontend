@@ -5,6 +5,22 @@ const api = axios.create({
   withCredentials: true
 });
 
+
+api.interceptors.request.use(
+  (config) =>{
+    console.log(`[${config.method?.toUpperCase()}]  ${config.url}` , config.data);
+    return config
+  }
+)
+
+
+api.interceptors.response.use(
+  (response) =>{
+    console.log(`${response.config.method?.toUpperCase()} ${response.config.url}`,response.data);
+    return response
+  }
+)
+
 export const signup  = async(formData : Object)=>{
   try {
     const res = await api.post('/signup',  formData );

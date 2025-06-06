@@ -6,6 +6,23 @@ const api = axios.create({
 })
 
 
+//Request interceptor 
+api.interceptors.request.use(
+    (config)=>{
+        console.log(`[${config.method?.toUpperCase()}] ${config.url}` , config.data);
+        return config  
+    }
+)
+
+//Response interceptor
+api.interceptors.response.use(
+    (response) =>{
+        console.log(`[${response.config.method?.toUpperCase()}] ${response.config.url}`,response.data);
+        return response
+    }
+)
+
+//Request interceptor
 export const registerAdmin = async( name :string , email : string , password : string )=>{
     try {
 

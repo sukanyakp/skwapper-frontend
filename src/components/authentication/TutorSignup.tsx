@@ -1,3 +1,4 @@
+import { registerTutor } from "@/api/tutorApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +14,7 @@ const TutorSignup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    
     if (!files || files.length === 0) {
       setMessage("Please upload required documents.");
       return;
@@ -22,14 +24,12 @@ const TutorSignup = () => {
     Array.from(files).forEach((file) => formData.append("documents", file));
 
     try {
-      const res = await fetch("/api/tutor/apply", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await registerTutor(formData)
 
-      if (res.ok) {
-        setMessage("Application submitted. Await admin approval.");
-        setTimeout(() => navigate("/"), 3000);
+      if (res?.status == 200) {
+        // setMessage("Application submitted. Await admin approval.");
+        // setTimeout(() => navigate("/"), 3000);
+        navigate("/pending-approval");
       } else {
         setMessage("Failed to submit. Please try again later.");
       }
