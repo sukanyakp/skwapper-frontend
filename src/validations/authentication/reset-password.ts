@@ -6,9 +6,9 @@ export const resetPasswordSchema = z
     password: z
       .string()
       .min(6, 'Password must be at least 6 characters long')
-      .regex(passwordRegex.capitalLetter, 'Password must include at least one capital letter')
-      .regex(passwordRegex.digit, 'Password must include at least one digit')
-      .regex(passwordRegex.specialSymbol, 'Password must include at least one special character')
+      // .regex(passwordRegex.capitalLetter, 'Password must include at least one capital letter')
+      // .regex(passwordRegex.digit, 'Password must include at least one digit')
+      // .regex(passwordRegex.specialSymbol, 'Password must include at least one special character')
       .nonempty('Password is required'),
 
     confirmPassword: z.string().nonempty('Please confirm your password'),
