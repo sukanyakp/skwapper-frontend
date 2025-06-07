@@ -38,3 +38,8 @@ export const registerTutor = async (formData: FormData) =>{
     }
     
 }
+
+export const checkTutorStatus = async() => {
+  const res =  await api.get("/status");
+  return ({status : res.status , data : res.data})
+};

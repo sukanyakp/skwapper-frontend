@@ -1,11 +1,26 @@
-import { registerTutor } from "@/api/tutorApi";
-import { useState } from "react";
+import { registerTutor, checkTutorStatus } from "@/api/tutorApi";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const TutorSignup = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  // Check if user already applied
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await checkTutorStatus();
+        if (res?.data?.hasApplied && !res.data.approved) {
+          navigate("/tutor/pending-approval");
+        }
+      } catch (error) {
+        console.error("Failed to check tutor status", error);
+      }
+    };
+    fetchStatus();
+  }, [navigate]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(e.target.files);
@@ -14,7 +29,6 @@ const TutorSignup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    
     if (!files || files.length === 0) {
       setMessage("Please upload required documents.");
       return;
@@ -24,12 +38,10 @@ const TutorSignup = () => {
     Array.from(files).forEach((file) => formData.append("documents", file));
 
     try {
-      const res = await registerTutor(formData)
+      const res = await registerTutor(formData);
 
-      if (res?.status == 200) {
-        // setMessage("Application submitted. Await admin approval.");
-        // setTimeout(() => navigate("/"), 3000);
-        navigate("/pending-approval");
+      if (res?.status === 200) {
+        navigate("/tutor/pending-approval");
       } else {
         setMessage("Failed to submit. Please try again later.");
       }
@@ -40,9 +52,14 @@ const TutorSignup = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-black text-white px-4">
-      <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded-lg w-full max-w-md space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-900 p-8 rounded-lg w-full max-w-md space-y-4"
+      >
         <h2 className="text-xl font-bold mb-2">Become a Tutor</h2>
-        <p className="text-sm text-gray-400">Upload your credentials for admin approval.</p>
+        <p className="text-sm text-gray-400">
+          Upload your credentials for admin approval.
+        </p>
 
         <input type="file" multiple onChange={handleFileChange} className="text-sm" />
 
