@@ -40,7 +40,7 @@ const Login = () => {
     try {
       const response = await login(formData);
       if (response?.status === 200) {
-        navigate("/");
+         navigate("/", { replace: true }); //replace true
       }
     } catch (error) {
       setErrors({ general: "Invalid email or password" });

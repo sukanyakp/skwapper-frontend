@@ -13,19 +13,19 @@ const StudentRoutes = () => {
   return (
     <Routes>
 
-      < Route  element={<PublicRoutes  allowedRole='student'/>}>
-      
-      < Route  path="/signup" element={<Signup/>}/>
+      < Route  element={<PublicRoutes />}>
+
+      < Route  path="/signup"     element={<Signup/>}/>
       < Route  path="/verify-otp" element ={<VerifyOtp/>}/>
-      < Route  path="/login"  element = {<Login/>}/>
-      < Route path='/forgot-password' element = {<ForgotPassword/>} />
-      <Route path="/reset-password/:token" element={<ResetPassword />} />
+      < Route  path="/login"      element = {<Login/>}/>
+      < Route  path='/forgot-password'       element = {<ForgotPassword/>} />
+      <Route   path="/reset-password/:token" element={<ResetPassword />} />
 
       </Route>
 
        {/* Accessible to everyone */}
-      < Route  path="/" element={<Home/>}/>
-      < Route  path="/about" element={<About/>}/>
+      < Route  path="/"       element={<Home/>}/>
+      < Route  path="/about"  element={<About/>}/>
 
     </Routes>
   )

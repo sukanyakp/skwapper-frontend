@@ -1,0 +1,15 @@
+[33m6071469[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m  feat: setup PublicRoutes to restrict access based on user role
+[33md977498[m feat: connected tutor signup to backend and status routing
+[33m89f58b9[m Added tutor document upload and pending approval flow
+[33mefd8714[m initiated tutor signup
+[33m9f61c90[m implement Signup form with Zod validation
+[33md1de01e[m added auth slice, protected routes
+[33m9e188ca[m Implemented Admin Login and Registration
+[33mf00a8f1[m[33m ([m[1;31morigin/feature/forgot-password-frontend[m[33m, [m[1;32mfeature/forgot-password-frontend[m[33m)[m Added password reset flow using JWT
+[33m935d234[m Merge pull request #2 from sukanyakp/feature/auth-token-flow
+[33m3ab8ff8[m[33m ([m[1;31morigin/feature/auth-token-flow[m[33m, [m[1;32mfeature/auth-token-flow[m[33m)[m Integrate refresh token support and login flow
+[33m8124dca[m Added About section component
+[33m164aa7a[m Merge pull request #1 from sukanyakp/frontend-validation
+[33m885e508[m[33m ([m[1;31morigin/frontend-validation[m[33m)[m Add validation and error handling to signup and login forms
+[33m92b05c9[m Added login and register components
+[33m7a08dbc[m first commit

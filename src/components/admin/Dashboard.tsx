@@ -1,32 +1,67 @@
-import { useNavigate } from 'react-router-dom';
+import {
+  Users,
+  GraduationCap,
+  BookOpen,
+  DollarSign,
+  MessageSquare,
+  Wallet,
+} from "lucide-react";
 
-const Dashboard = () => {
-  const navigate = useNavigate();
+const cards = [
+  {
+    title: "Total Tutors",
+    value: 45,
+    icon: <Users className="text-indigo-600" size={28} />,
+  },
+  {
+    title: "Total Students",
+    value: 120,
+    icon: <GraduationCap className="text-green-600" size={28} />,
+  },
+  {
+    title: "Courses",
+    value: 18,
+    icon: <BookOpen className="text-blue-600" size={28} />,
+  },
+  {
+    title: "Payments",
+    value: "₹1,20,000",
+    icon: <DollarSign className="text-yellow-600" size={28} />,
+  },
+  {
+    title: "Wallet Balance",
+    value: "₹10,000",
+    icon: <Wallet className="text-purple-600" size={28} />,
+  },
+  {
+    title: "Feedbacks",
+    value: 32,
+    icon: <MessageSquare className="text-pink-600" size={28} />,
+  },
+];
 
-  // const handleLogout = () => {
-  //   // Clear any stored token or session data here if applicable
-  //   // localStorage.removeItem("token");
-  //   navigate("/admin"); // redirect back to login or landing
-  // };
-
+const AdminDashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-        <p className="text-gray-700 mb-6">Welcome back, Admin!</p>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
 
-        <div className="flex justify-between items-center">
-          {/* Add dashboard widgets/stats/controls here */}
-          {/* <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map((card, index) => (
+          <div
+          key={index}
+            className="bg-white p-5 rounded-xl shadow-md flex items-center justify-between"
           >
-            Logout
-          </button> */}
-        </div>
+            <div>
+              <p className="text-gray-500 text-sm">{card.title}</p>
+              <h3 className="text-xl font-semibold text-gray-800">{card.value}</h3>
+            </div>
+            <div>{card.icon}</div>
+          </div>
+        ))}
+        
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

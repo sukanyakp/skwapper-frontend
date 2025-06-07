@@ -1,25 +1,10 @@
-import {  UserContext } from "@/context/user-context";
-import type { IUserContext } from "@/context/user-context";
-import { useContext } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+  import { Navigate, Outlet } from "react-router-dom";
+  import { useSelector } from "react-redux";
 
-// Inteface for Props
-interface PropsType {
-    allowedRole: string;
-}
+  const PublicRoute = () => {
+    const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
 
-// UnProtected Route
-function PublicRoutes({ allowedRole }: PropsType) {
-    const userContext = useContext(UserContext) as IUserContext;
-    const { isAuth, user } = userContext;
+    return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
+  };
 
-    // Check auth and role
-    if (isAuth && user?.role === allowedRole) {
-        return <Navigate to={`/${allowedRole}/dashboard`} />;
-    }
-
-    return <Outlet />;
-}
-
-// Export UnProtected Route
-export default PublicRoutes;
+  export default PublicRoute;

@@ -13,7 +13,8 @@ const TutorSignup = () => {
       try {
         const res = await checkTutorStatus();
         if (res?.data?.hasApplied && !res.data.approved) {
-          navigate("/tutor/pending-approval");
+          navigate("/tutor/pending-approval" , {replace : true});
+          
         }
       } catch (error) {
         console.error("Failed to check tutor status", error);

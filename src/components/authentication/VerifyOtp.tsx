@@ -47,7 +47,8 @@ const VerifyOtp = () => {
       const response = await verifyOtp(email, finalOtp);
       if (response?.status === 201) {
         toast.success("OTP verified successfully");
-        navigate("/login");
+
+          navigate("/login", { replace: true }); // replace true
       } else {
         toast.error("Invalid OTP");
       }
