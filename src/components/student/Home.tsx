@@ -1,10 +1,41 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../common/Navbar";
 import Footer from "../common/Footer";
-import learn from '../../assets/Anime/learn.json';
+import learn from "../../assets/Anime/learn.json";
 import Lottie from "lottie-react";
+import { checkApplicationStatus, checkTutorStatus } from "../../api/tutorApi"; // Adjust the path if necessary
+
 
 const Home = () => {
+  const [tutorStatus, setTutorStatus] = useState<"applied" | "notApplied" | null>(null);
+  const navigate = useNavigate()
+   
+  const handleApplicationStatus = async () =>{
+    try {
+
+      const res = await checkApplicationStatus()
+      console.log(res?.data.isApproved , "isApproved");
+      
+      setTutorStatus(res?.data.status); 
+      if(res?.data.status == "notApplied"){
+        navigate("/apply-tutor")
+
+      }else if(res?.data.status == "applied"){
+        navigate("/tutor/pending-approval")
+      }else if (res?.data.isApproved){
+        navigate("/tutor/home")
+      } 
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+
+ 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white font-sans">
       {/* Navbar */}
@@ -95,22 +126,22 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Become a Tutor Section */}
+      <section className="px-8 md:px-16 py-16 text-center bg-gradient-to-r from-cyan-600 to-blue-600">
+        <h3 className="text-2xl md:text-3xl font-semibold mb-4">
+          Want to Teach Music?
+        </h3>
+        <p className="text-white/80 text-sm md:text-base mb-6 max-w-xl mx-auto">
+          Share your musical skills with students across the world. Join our platform as a tutor and start teaching online.
+        </p>
 
- <section className="px-8 md:px-16 py-16 text-center bg-gradient-to-r from-cyan-600 to-blue-600">
-  <h3 className="text-2xl md:text-3xl font-semibold mb-4">
-    Want to Teach Music?
-  </h3>
-  <p className="text-white/80 text-sm md:text-base mb-6 max-w-xl mx-auto">
-    Share your musical skills with students across the world. Join our platform as a tutor and start teaching online.
-  </p>
-  <Link to="/tutor/signup">
-    <button className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition text-sm">
-      Become a Tutor
-    </button>
-  </Link>
-</section>
-
-
+          
+            <button onClick={handleApplicationStatus} className="bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition text-sm">
+             Become a Tutor
+            </button>
+        
+      
+      </section>
 
       {/* Footer */}
       <Footer />

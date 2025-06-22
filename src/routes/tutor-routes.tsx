@@ -1,18 +1,21 @@
-import PendingApproval from "@/components/authentication/PendingApproval"
-import TutorSignup from "@/components/authentication/TutorSignup"
-import { Route, Routes } from "react-router-dom"
-
+import PendingApproval from "@/components/authentication/PendingApproval";
+import TutorSignup from "@/components/authentication/TutorSignup";
+import ProtectedRoute from "../routes/protected-routes";
+import { Route, Routes } from "react-router-dom";
+import TutorHome from "@/components/tutor/TutorHome";
 
 const TutorRoutes = () => {
   return (
-    <div>
-      
-      <Routes>
-        <Route path="/signup"  element={<TutorSignup/>}/>
-        <Route path="/pending-approval" element={<PendingApproval/>}/>
-      </Routes>
-    </div>
-  )
-}
+    <Routes>
+      {/* <Route path="/signup" element={<TutorSignup />} /> */}
+      <Route path="/home" element={<TutorHome/>}/>
 
-export default TutorRoutes
+      {/* Protect the pending-approval route */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/pending-approval" element={<PendingApproval />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default TutorRoutes;

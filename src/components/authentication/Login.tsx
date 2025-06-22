@@ -5,9 +5,12 @@ import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
 import { Input } from "../ui/input";
 import { formSchema } from "../../validations/authentication/login"; 
+import { loginSuccess } from "@/store/slices/userSlice"; 
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,8 +42,15 @@ const Login = () => {
 
     try {
       const response = await login(formData);
+
+      dispatch(loginSuccess({user : response?.data.user, accessToken : response?.data.token}))
+      localStorage.setItem("token" , response?.data.token)
+      localStorage.setItem("user" ,  JSON.stringify( response?.data.user))
+      console.log(response?.data.user , 'response .data. user');
+      
+      
       if (response?.status === 200) {
-         navigate("/", { replace: true }); //replace true
+         navigate("/"); //replace true
       }
     } catch (error) {
       setErrors({ general: "Invalid email or password" });

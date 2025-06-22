@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "../../api/adminApi";
 import { adminLoginSchema } from "../../validations/admin/adminLoginSchema";
 import { Input } from "../ui/input";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/store/slices/adminSlice"; // Adjust path as needed
+import { login } from "@/api/api";
+
 
 export default function AdminLogin() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,11 +38,28 @@ export default function AdminLogin() {
     }
 
     try {
-      const res = await loginAdmin(formData.email, formData.password);
-      localStorage.setItem("adminToken", res?.data.token);
+      setLoading(true);
+
+      const res = await login(formData);
+
+      // Store access token in localStorage
+      // localStorage.setItem("accessToken", res?.data.token);
+
+      //  Store admin info in Redux
+      console.log(res?.data.user);
+      
+      dispatch(loginSuccess({admin : res?.data.user ,accessToken : res?.data.token})); // reloading issue solved
+
+      //  Optionally persist admin in localStorage too
+      localStorage.setItem("user", JSON.stringify(res?.data.user));
+
+      // Navigate to dashboard
       navigate("/admin/dashboard");
     } catch (err) {
+      console.error("Login failed", err);
       setApiError("Invalid credentials");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +77,7 @@ export default function AdminLogin() {
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full mb-1 px-3 py-2 border rounded  "
+          className="w-full mb-1 px-3 py-2 border rounded"
         />
         {errors.email && (
           <p className="text-red-500 text-xs mb-2">{errors.email}</p>
@@ -66,7 +89,7 @@ export default function AdminLogin() {
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full mb-1 px-3 py-2 border rounded "
+          className="w-full mb-1 px-3 py-2 border rounded"
         />
         {errors.password && (
           <p className="text-red-500 text-xs mb-2">{errors.password}</p>
@@ -76,9 +99,10 @@ export default function AdminLogin() {
 
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

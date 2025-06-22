@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   LogOut,
   Book,
@@ -15,69 +15,69 @@ const AdminSidebar = () => {
     <aside className="h-screen w-64 bg-white text-gray-800 shadow-md flex flex-col p-4 border-r">
       <h1 className="text-2xl font-bold mb-8 text-center text-indigo-600">Skwapper</h1>
       <nav className="flex flex-col gap-3">
-        <NavLink
+        <Link
           to="/admin/dashboard"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <LayoutDashboard size={20} />
           Dashboard
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/admin/tutors"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <Users size={20} />
           Tutors
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/admin/students"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <GraduationCap size={20} />
           Students
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/admin/courses"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <Book size={20} />
           Courses
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/admin/payments"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <DollarSign size={20} />
           Payments
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/admin/wallet"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <Wallet size={20} />
           Wallet
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/admin/feedbacks"
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <MessageSquare size={20} />
           Feedbacks
-        </NavLink>
+        </Link>
 
-        <NavLink
+        <Link
           to="/logout"
           className="flex items-center gap-3 mt-auto hover:bg-gray-100 p-2 rounded text-red-600"
         >
           <LogOut size={20} />
           Logout
-        </NavLink>
+        </Link>
       </nav>
     </aside>
   );

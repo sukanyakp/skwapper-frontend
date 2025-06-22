@@ -1,12 +1,11 @@
 const PendingApproval = () => {
   return (
-    <div className="min-h-screen flex justify-center items-center bg-black text-white px-4">
-      <div className="bg-gray-900 p-8 rounded-lg w-full max-w-md space-y-4 text-center">
-        <h2 className="text-xl font-bold">Application Submitted!</h2>
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="bg-gray-900 p-8 rounded">
+        <h2 className="text-lg font-bold mb-2">Application Under Review</h2>
         <p className="text-sm text-gray-400">
-          Your application is under review. You'll be notified once an admin approves your account.
+          Your application is under review. You will be notified once the admin approves it.
         </p>
-        <p className="text-xs text-cyan-400">Thank you for your patience.</p>
       </div>
     </div>
   );

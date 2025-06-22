@@ -1,29 +1,9 @@
-import axios from 'axios';
+import axiosInstance from "./axios-instance";
 
-const api = axios.create({
-  baseURL: 'http://localhost:3000',
-  withCredentials: true
-});
-
-
-api.interceptors.request.use(
-  (config) =>{
-    console.log(`[${config.method?.toUpperCase()}]  ${config.url}` , config.data);
-    return config
-  }
-)
-
-
-api.interceptors.response.use(
-  (response) =>{
-    console.log(`${response.config.method?.toUpperCase()} ${response.config.url}`,response.data);
-    return response
-  }
-)
 
 export const signup  = async(formData : Object)=>{
   try {
-    const res = await api.post('/signup',  formData );
+    const res = await axiosInstance.post('/auth/signup',  formData );
     console.log('signup successful', res.data); 
     return ({status : res.status , data : res.data})
 } catch (error) {
@@ -34,7 +14,7 @@ export const signup  = async(formData : Object)=>{
 
 export const verifyOtp = async (email:string ,otp:string) =>{
   try {
-    const res = await api.post(`/verify-otp`,{ email , otp })
+    const res = await axiosInstance.post(`/auth/verify-otp`,{ email , otp })
     console.log(res.status , res.data ,'verifying otp in the backend');
     return ({status : res.status , data : res.data})
   } catch (error) {
@@ -46,12 +26,12 @@ export const verifyOtp = async (email:string ,otp:string) =>{
 export const login = async(formData : object) =>{
   try {
 
-   const res = await api.post(`/login`,formData)
+   const res = await axiosInstance.post(`/auth/login`,formData)
    console.log(' heere we are in api login ');
    const  { token }  = res.data
    console.log(token , 'accessToken');
    
-   localStorage.setItem(token,'accessToken')
+   localStorage.setItem('accessToken',token)
    
     return ({status : res.status, data : res.data})
     
@@ -64,7 +44,7 @@ export const login = async(formData : object) =>{
 export const sendResetRequest  = async (email : string) =>{
   try {
 
-    const res = await api.post('/forgot-password' ,{email})
+    const res = await axiosInstance.post('/auth/forgot-password' ,{email})
     console.log(res , 'last of forgot password');
        return { status: res.status, data: res.data };
     
@@ -77,7 +57,7 @@ export const sendResetRequest  = async (email : string) =>{
 
 export const resetPassword = async (token: string | undefined, password: string) => {
   try {
-    const res = await api.post(`/reset-password/${token}`, {
+    const res = await axiosInstance.post(`/auth/reset-password/${token}`, {
       password,
     });
     return res;
@@ -92,7 +72,7 @@ export const resendOtp = async (email : string)=>{
 
     console.log('intialising resendOtp');
     
-    const res = await api.post(`/resend-otp`,{email})
+    const res = await axiosInstance.post(`/auth/resend-otp`,{email})
     console.log('got the message from resendOtp');
     
     return res
@@ -104,4 +84,4 @@ export const resendOtp = async (email : string)=>{
 }
 
 
-export default api;
+

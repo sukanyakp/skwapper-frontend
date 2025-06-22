@@ -5,16 +5,22 @@ import { useNavigate } from "react-router-dom";
 const TutorSignup = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user already applied
+  // Additional form fields
+  const [title, setTitle] = useState("");
+  const [bio, setBio] = useState("");
+  const [skills, setSkills] = useState("");
+  const [experience, setExperience] = useState("");
+
+  // Check if already applied
   useEffect(() => {
     const fetchStatus = async () => {
       try {
         const res = await checkTutorStatus();
         if (res?.data?.hasApplied && !res.data.approved) {
-          navigate("/tutor/pending-approval" , {replace : true});
-          
+          navigate("/tutor/pending-approval", { replace: true });
         }
       } catch (error) {
         console.error("Failed to check tutor status", error);
@@ -35,19 +41,45 @@ const TutorSignup = () => {
       return;
     }
 
-    const formData = new FormData();
-    Array.from(files).forEach((file) => formData.append("documents", file));
+    if (!title || !bio || !skills || !experience) {
+      setMessage("Please fill in all the fields.");
+      return;
+    }
 
     try {
+      setIsSubmitting(true);
+
+      // Check again before submitting to avoid duplicate submissions
+      const statusRes = await checkTutorStatus();
+      if (statusRes?.data?.hasApplied) {
+        navigate("/tutor/pending-approval", { replace: true });
+        return;
+      }
+
+      const formData = new FormData();
+      Array.from(files).forEach((file) => formData.append("documents", file));
+      formData.append("title", title);
+      formData.append("bio", bio);
+      formData.append("skills", skills);
+      formData.append("experience", experience);
+
       const res = await registerTutor(formData);
 
-      if (res?.status === 200) {
+      if (res?.status === 201) {
         navigate("/tutor/pending-approval");
       } else {
         setMessage("Failed to submit. Please try again later.");
       }
-    } catch (error) {
-      setMessage("Something went wrong.");
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        navigate("/tutor/pending-approval", { replace: true });
+      } else if (err.response) {
+        setMessage(err.response.data?.message || "Submission failed.");
+      } else {
+        setMessage("Network error. Please try again later.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -59,18 +91,55 @@ const TutorSignup = () => {
       >
         <h2 className="text-xl font-bold mb-2">Become a Tutor</h2>
         <p className="text-sm text-gray-400">
-          Upload your credentials for admin approval.
+          Upload your credentials and information for admin approval.
         </p>
 
-        <input type="file" multiple onChange={handleFileChange} className="text-sm" />
+        <input
+          type="text"
+          placeholder="Title (e.g. Physics Tutor)"
+          className="w-full p-2 rounded text-black"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <textarea
+          placeholder="Bio"
+          className="w-full p-2 rounded text-black"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Skills (e.g. React, Python, Algebra)"
+          className="w-full p-2 rounded text-black"
+          value={skills}
+          onChange={(e) => setSkills(e.target.value)}
+        />
+
+        <input
+          type="number"
+          placeholder="Years of Experience"
+          className="w-full p-2 rounded text-black"
+          value={experience}
+          onChange={(e) => setExperience(e.target.value)}
+        />
+
+        <input
+          type="file"
+          multiple
+          onChange={handleFileChange}
+          className="text-sm"
+        />
 
         {message && <p className="text-xs text-cyan-400 mt-2">{message}</p>}
 
         <button
           type="submit"
-          className="bg-cyan-600 hover:bg-cyan-700 text-white py-2 rounded w-full"
+          className="bg-cyan-600 hover:bg-cyan-700 text-white py-2 rounded w-full disabled:opacity-50"
+          disabled={isSubmitting}
         >
-          Submit Documents
+          {isSubmitting ? "Submitting..." : "Submit Documents"}
         </button>
       </form>
     </div>

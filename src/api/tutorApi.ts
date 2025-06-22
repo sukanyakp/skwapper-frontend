@@ -1,45 +1,35 @@
-import axios from "axios";
+import axiosInstance from "./axios-instance";
 
-const api = axios.create({
-    baseURL : 'http://localhost:3000/tutor',
-    withCredentials : true
-})
 
-api.interceptors.request.use(
-  (config) =>{
-    console.log(`[${config.method?.toUpperCase()}]  ${config.url}` , config.data);
-    return config
+export const registerTutor = async (formData: FormData) => {
+  try {
+    const res = await axiosInstance.post("/tutor/apply", formData);
+    return res; // return full axios response (with .status)
+  } catch (error: any) {
+    throw error; // throw so error handling works in the calling function
   }
-)
+};
 
 
-api.interceptors.response.use(
-  (response) =>{
-    console.log(`${response.config.method?.toUpperCase()} ${response.config.url}`,response.data);
-    return response
-  }
-)
 
-export const registerTutor = async (formData: FormData) =>{
-    console.log('hello regitsteTutor');
 
-    try {
+export const checkApplicationStatus = async ()=>{
+  try {
 
-        const res = await api.post("/apply" ,formData , {
-          headers : {
-            'Content-Type' : 'multipart/form-data'
-          }
-        })
-        return({status : res.status , data : res.data})
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
+    const res = await axiosInstance.get("/tutor/apply-status")
+    console.log(res.data.status, 'res.data.status at api');
     
+    return res
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
 }
 
 export const checkTutorStatus = async() => {
-  const res =  await api.get("/status");
+  const res =  await axiosInstance.get("/tutor/status");
+  console.log(res.data.status,'ressss');
+  
   return ({status : res.status , data : res.data})
 };

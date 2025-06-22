@@ -4,8 +4,13 @@ import type { RootState } from "../store/store";
 
 const ProtectedRoute = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const token = localStorage.getItem("accessToken");
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  if (isAuthenticated || token) {
+    return <Outlet />;
+  }
+
+  return <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
