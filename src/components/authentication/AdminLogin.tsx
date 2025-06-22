@@ -50,8 +50,6 @@ export default function AdminLogin() {
       
       dispatch(loginSuccess({admin : res?.data.user ,accessToken : res?.data.token})); // reloading issue solved
 
-      //  Optionally persist admin in localStorage too
-      localStorage.setItem("user", JSON.stringify(res?.data.user));
 
       // Navigate to dashboard
       navigate("/admin/dashboard");

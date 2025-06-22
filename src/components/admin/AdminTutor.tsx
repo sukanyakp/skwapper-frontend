@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { Link } from "react-router-dom";
 import axiosInstance from "@/api/axios-instance";
+import { useNavigate } from "react-router-dom";
 
 interface TutorApplication {
   _id: string;
   status: "pending" | "approved" | "rejected";
+  isBlocked?: boolean;
   user: {
     _id: string;
     name: string;
     email: string;
-    isBlocked?: boolean;
+  
   };
 }
 
 const AdminTutors = () => {
   const [applications, setApplications] = useState<TutorApplication[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchApplications();
@@ -25,6 +26,8 @@ const AdminTutors = () => {
   const fetchApplications = async () => {
     try {
       const response = await axiosInstance.get("/admin/tutor-applications");
+      console.log(response.data , 'fetch all details .. ');
+      
       setApplications(response.data);
     } catch (err) {
       console.error("Error fetching tutor applications:", err);
@@ -33,7 +36,9 @@ const AdminTutors = () => {
 
   const handleBlockToggle = async (userId: string, shouldBlock: boolean) => {
     try {
-      await axios.patch(`/admin/users/${userId}/block-toggle`, { block: shouldBlock });
+      await axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
+        block: shouldBlock,
+      });
       fetchApplications();
     } catch (err) {
       console.error("Error toggling block status:", err);
@@ -68,21 +73,36 @@ const AdminTutors = () => {
         <tbody>
           {applications.map((application) => (
             <tr key={application._id} className="border-b hover:bg-gray-50">
-              <td className="p-4 text-blue-600 underline">
-                <Link to={`/admin/tutors/${application._id}`}>{application.user.name}</Link>
+              <td
+                className="p-4 cursor-pointer hover:bg-gray-100 transition"
+                onClick={() => navigate(`/admin/tutors/${application._id}`)}
+              >
+                {application.user.name}
               </td>
-              <td className="p-4 text-blue-600 underline">
-                <Link to={`/admin/tutors/${application._id}`}>{application.user.email}</Link>
+              <td
+                className="p-4 cursor-pointer hover:bg-gray-100 transition"
+                onClick={() => navigate(`/admin/tutors/${application._id}`)}
+              >
+                {application.user.email}
               </td>
-              <td className={`p-4 ${getBadgeColor(application.status)} cursor-pointer`}>
-                <Link to={`/admin/tutors/${application._id}`}>{application.status}</Link>
+              <td
+                className={`p-4 ${getBadgeColor(application.status)} cursor-pointer hover:opacity-90 transition`}
+                onClick={() => navigate(`/admin/tutors/${application._id}`)}
+              >
+                {application.status}
               </td>
               <td className="p-4">
                 <Button
-                  onClick={() => handleBlockToggle(application.user._id, !application.user.isBlocked)}
-                  className={application.user.isBlocked ? "bg-yellow-500" : "bg-red-500"}
+                  onClick={() =>
+                    handleBlockToggle(application.user._id, !application.isBlocked)
+                  }
+                  className={
+                    application.isBlocked
+                      ? "bg-yellow-500 hover:bg-yellow-600"
+                      : "bg-red-600 hover:bg-red-700"
+                  }
                 >
-                  {application.user.isBlocked ? "Unblock" : "Block"}
+                  {application.isBlocked ? "Unblock" : "Block"}
                 </Button>
               </td>
             </tr>

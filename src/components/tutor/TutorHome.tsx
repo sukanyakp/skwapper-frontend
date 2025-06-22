@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import Navbar from "../common/Navbar";
 import Footer from "../common/Footer";
+import TutorNavbar from "../common/TutorNavbar";
 
 const TutorHome = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 text-white font-sans">
       {/* Navbar */}
-      <Navbar />
+      <TutorNavbar />
 
       {/* Dashboard Summary */}
       <section className="px-8 md:px-16 py-16">

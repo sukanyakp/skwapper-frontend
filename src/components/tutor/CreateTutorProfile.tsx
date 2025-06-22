@@ -1,46 +1,42 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-import axiosInstance from "@/api/axios-instance";
 import ProfileForm from "../common/ProfileForm";
+import axiosInstance from "@/api/axios-instance";
+import { useNavigate } from "react-router-dom";
 
-
-const CreateStudentProfile = () => {
-  const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.auth.user);
-
+export const CreateTutorProfile = () => {
   const [formData, setFormData] = useState({
-    name: user?.name || "",
+    name: "",
     bio: "",
-    instrument: "",
+    title: "",
+    skills: "",
     experience: "",
     location: "",
-    image: null as File | null,
+    image: null,
   });
+
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     try {
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("bio", formData.bio);
-      payload.append("instrument", formData.instrument);
       payload.append("experience", formData.experience);
       payload.append("location", formData.location);
       if (formData.image) {
         payload.append("image", formData.image);
       }
 
-      const res = await axiosInstance.post("/user/profile", payload, {
+      const res = await axiosInstance.post("/tutor/profile", payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log("Student profile created:", res.data);
-      navigate("/profile");
+      console.log("tutor     profile created:", res.data);
+      navigate("tutor/profile");
     } catch (err) {
       console.error("Failed to create student profile:", err);
     }
@@ -52,10 +48,8 @@ const CreateStudentProfile = () => {
         formData={formData}
         setFormData={setFormData}
         onSubmit={handleSubmit}
-        role="student"
+        role="tutor"
       />
     </div>
   );
 };
-
-export default CreateStudentProfile;

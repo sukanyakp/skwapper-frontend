@@ -27,11 +27,11 @@ export const login = async(formData : object) =>{
   try {
 
    const res = await axiosInstance.post(`/auth/login`,formData)
-   console.log(' heere we are in api login ');
-   const  { token }  = res.data
-   console.log(token , 'accessToken');
+  //  console.log(' heere we are in api login ');
+  //  const  { token }  = res.data
+  //  console.log(token , 'accessToken');
    
-   localStorage.setItem('accessToken',token)
+  //  localStorage.setItem('accessToken',token)
    
     return ({status : res.status, data : res.data})
     

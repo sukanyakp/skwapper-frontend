@@ -3,6 +3,9 @@ import TutorSignup from "@/components/authentication/TutorSignup";
 import ProtectedRoute from "../routes/protected-routes";
 import { Route, Routes } from "react-router-dom";
 import TutorHome from "@/components/tutor/TutorHome";
+import TutorNavbar from "@/components/common/TutorNavbar";
+import { CreateTutorProfile } from "@/components/tutor/CreateTutorProfile";
+import TutorProfile from "@/components/tutor/TutorProfile";
 
 const TutorRoutes = () => {
   return (
@@ -13,6 +16,8 @@ const TutorRoutes = () => {
       {/* Protect the pending-approval route */}
       <Route element={<ProtectedRoute />}>
         <Route path="/pending-approval" element={<PendingApproval />} />
+        <Route path="/create-profile" element ={<CreateTutorProfile/>}/>
+        <Route path="/profile" element={<TutorProfile/>}/>
       </Route>
     </Routes>
   );
