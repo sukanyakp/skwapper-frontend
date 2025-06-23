@@ -31,8 +31,17 @@ const refreshToken = async ()=>{
 
 axiosInstance.interceptors.request.use(
     (config) : any =>{
-        const accessToken = localStorage.getItem("token");
-        console.log('here we are at the axiosInstance interceptors req');
+        const role = localStorage.getItem("role");
+
+  let accessToken : string | null = null;
+  if (role === "admin") {
+    accessToken = localStorage.getItem("admin_token");
+  } else if (role === "student") {
+    accessToken = localStorage.getItem("student_token");
+  } else if (role === "tutor") {
+    accessToken = localStorage.getItem("tutor_token");
+  }
+
         
 
         if(accessToken){
@@ -55,7 +64,7 @@ axiosInstance.interceptors.response.use(
 
         if(
             err.response && 
-            err.response.status === 403&& 
+            err.response.status === 403 && 
             !originalRequest._retry
         ){
                 originalRequest._retry = true
@@ -71,12 +80,22 @@ axiosInstance.interceptors.response.use(
                 } catch (error : any) {
                     console.log(error);
                      toast( "Token expired. Please login again!" );
-                localStorage.removeItem("token");
-                //  localStorage.removeItem("accessToken");
-        window.location.href = "/login";
-                // localStorage.removeItem("user");
-                // localStorage.removeItem("isAuth")
-                return;
+                     const role = localStorage.getItem("role");
+  if (role === "admin") {
+     localStorage.removeItem("admin_token");
+      window.location.href = "/admin/login";
+      return
+  } else if (role === "student") {
+    localStorage.removeItem("student_token");
+     window.location.href = "/login";
+     return
+  } else if (role === "tutor") {
+    localStorage.removeItem("tutor_token");
+     window.location.href = "/login";
+     return
+  }
+
+
                     
                 }
         }

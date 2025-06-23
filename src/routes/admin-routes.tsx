@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import AdminLogin from "@/components/authentication/AdminLogin";
-
 import Dashboard from "@/components/admin/Dashboard";
 import AdminTutors from "@/components/admin/AdminTutor";
 import AdminLayout from "@/components/layouts/AdminLayout";
