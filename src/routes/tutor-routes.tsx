@@ -3,7 +3,6 @@ import TutorSignup from "@/components/authentication/TutorSignup";
 import ProtectedRoute from "../routes/protected-routes";
 import { Route, Routes } from "react-router-dom";
 import TutorHome from "@/components/tutor/TutorHome";
-import TutorNavbar from "@/components/common/TutorNavbar";
 import { CreateTutorProfile } from "@/components/tutor/CreateTutorProfile";
 import TutorProfile from "@/components/tutor/TutorProfile";
 
