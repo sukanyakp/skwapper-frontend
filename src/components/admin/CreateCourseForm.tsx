@@ -18,7 +18,7 @@ const CreateCourseForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/admin/courses", formData);
+      await axiosInstance.post("/courses", formData);
       navigate("/admin/courses");
     } catch (err) {
       console.error("Error creating course:", err);

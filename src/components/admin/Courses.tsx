@@ -20,7 +20,7 @@ const Courses = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await axiosInstance.get("/admin/courses");
+      const res = await axiosInstance.get("/courses");
       setCourses(res.data);
     } catch (err) {
       console.error("Error fetching courses:", err);
