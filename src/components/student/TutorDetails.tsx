@@ -4,8 +4,10 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "@/api/axios-instance";
 import { toast } from "sonner";
 
+
 interface Tutor {
   _id: string;
+  userId: string
   name: string;
   title: string;
   bio: string;
@@ -44,7 +46,8 @@ const TutorDetails = () => {
 
   const handleRequestSession = async ()=>{
     try {
-      const res = await axiosInstance.post(`user/tutor/request/${tutorId}`);
+      const tUserId = tutor?.userId
+      const res = await axiosInstance.post(`user/tutor/request/${tUserId}`);
       console.log(res.data);
       toast("Video session request sent successfully!")
     } catch (error) {

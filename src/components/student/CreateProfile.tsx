@@ -23,9 +23,9 @@ const CreateStudentProfile = () => {
     const fetchInstruments = async () => {
       try {
         const res = await axiosInstance.get("/courses");
-        const courses = res.data as { title: string }[];
-        const uniqueTitles = [...new Set(courses.map((course) => course.title))];
-        setAvailableInstruments(uniqueTitles);
+        const courses = res.data as { category: string }[];
+        const uniqueCategorys = [...new Set(courses.map((course) => course.category))];
+        setAvailableInstruments(uniqueCategorys);
       } catch (err) {
         console.error("Failed to fetch instruments:", err);
       }
@@ -120,9 +120,9 @@ const CreateStudentProfile = () => {
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
           >
             <option value="">Select an instrument</option>
-            {availableInstruments.map((title, idx) => (
-              <option key={idx} value={title}>
-                {title}
+            {availableInstruments.map((category, idx) => (
+              <option key={idx} value={category}>
+                {category}
               </option>
             ))}
           </select>
