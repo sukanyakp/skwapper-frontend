@@ -5,6 +5,7 @@ import AdminRoutes from "./routes/admin-routes";
 import { Provider } from "react-redux";
 import {store} from "./store/store";
 import TutorRoutes from "./routes/tutor-routes";
+import NotFound from "./components/common/NotFound";
 
 
 
@@ -21,6 +22,8 @@ const App = () => {
           <Route path="/*" element={<StudentRoutes />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="/tutor/*" element={<TutorRoutes />} />
+         
+
         </Routes>
       </BrowserRouter>
     </Provider>

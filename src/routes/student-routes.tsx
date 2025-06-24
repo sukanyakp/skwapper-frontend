@@ -15,10 +15,18 @@ import TutorSignup from '@/components/authentication/TutorSignup'
 import StudentLayout from '../components/layouts/StudentLayout' 
 import PendingApproval from '@/components/authentication/PendingApproval'
 import AllCourses from '@/components/courses/AllCourses'
+import Tutors from '@/components/student/Tutors'
+import TutorDetails from '@/components/student/TutorDetails'
+
+import NotFound from '@/components/common/NotFound'
+import Hello from '@/components/student/Hello'
+import TutorDetail from '@/components/student/TutorDetail'
+import TutorDet from '@/components/student/Hello'
 
 const StudentRoutes = () => {
   return (
     <Routes>
+       <Route path="*" element={<NotFound />} />
 
       {/* Public Routes */}
       <Route element={<PublicRoutes />}>
@@ -37,6 +45,8 @@ const StudentRoutes = () => {
           <Route path="/apply-tutor" element={<TutorSignup />} />
           <Route path="/pending-approval" element={<PendingApproval />} />
               <Route path='/courses' element= {<AllCourses/>}/>
+              <Route path='/tutors' element = {<Tutors/>}/>
+              <Route path='/tutors/:tutorId' element= {<TutorDetails/>}/>
         </Route>
       </Route>
 

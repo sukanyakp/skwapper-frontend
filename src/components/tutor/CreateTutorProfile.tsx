@@ -6,7 +6,7 @@ const CreateTutorProfile = () => {
   const [formData, setFormData] = useState({
     name: "",
     bio: "",
-    title: "",
+    category: "",
     skills: [] as string[],
     experience: "",
     location: "",
@@ -20,8 +20,8 @@ const CreateTutorProfile = () => {
     const fetchSkills = async () => {
       try {
         const res = await axiosInstance.get("/courses");
-        const courses = res.data as { title : string }[];
-        const uniqueSkills = [...new Set(courses.map((course) => course.title))];
+        const courses = res.data as { category : string }[];
+        const uniqueSkills = [...new Set(courses.map((course) => course.category))];
         setAvailableSkills(uniqueSkills);
         console.log(availableSkills , 'availableSkills');
         
@@ -57,7 +57,7 @@ const CreateTutorProfile = () => {
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("bio", formData.bio);
-      payload.append("title", formData.title);
+      payload.append("category", formData.category);
       payload.append("experience", formData.experience);
       payload.append("location", formData.location);
       formData.skills.forEach((skill) => payload.append("skills", skill));
@@ -106,10 +106,10 @@ const CreateTutorProfile = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm mb-1">Title</label>
+          <label className="block text-sm mb-1">Category</label>
           <input
-            name="title"
-            value={formData.title}
+            name="category"
+            value={formData.category}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
