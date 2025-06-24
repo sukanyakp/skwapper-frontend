@@ -22,7 +22,7 @@ const Home = () => {
         navigate("/apply-tutor")
 
       }else if(res?.data.status == "applied"){
-        navigate("/tutor/pending-approval")
+        navigate("/pending-approval")
       }else if (res?.data.isApproved){
         navigate("/tutor/home")
       } 

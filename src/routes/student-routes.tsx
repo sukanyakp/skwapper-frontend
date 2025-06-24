@@ -12,34 +12,35 @@ import CreateProfilePage from '@/components/student/CreateProfile'
 import UserProfile from '@/components/student/UserProfile'
 import ProtectedRoute from './protected-routes'
 import TutorSignup from '@/components/authentication/TutorSignup'
+import StudentLayout from '../components/layouts/StudentLayout' 
+import PendingApproval from '@/components/authentication/PendingApproval'
 
 const StudentRoutes = () => {
   return (
     <Routes>
 
-      < Route  element={<PublicRoutes />}>
-      
-      < Route  path="/login"      element = {<Login/>}/>
-
-      < Route  path="/signup"     element={<Signup/>}/>
-      < Route  path="/verify-otp" element ={<VerifyOtp/>}/>
-      < Route  path='/forgot-password'       element = {<ForgotPassword/>} />
-      <Route   path="/reset-password/:token" element={<ResetPassword />} />
-
-
+      {/* Public Routes */}
+      <Route element={<PublicRoutes />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Route>
-      <Route element = {<ProtectedRoute/>} >
 
-      <Route path="/create-profile" element={<CreateProfilePage />} />
-      <Route path="/profile" element={<UserProfile />} />
-      <Route path='/apply-tutor' element = {<TutorSignup/>}/>  
-      {/* apply for tutor  */}
-
+      {/* Protected Routes with Layout */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<StudentLayout />}>
+          <Route path="/create-profile" element={<CreateProfilePage />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/apply-tutor" element={<TutorSignup />} />
+          <Route path="/pending-approval" element={<PendingApproval />} />
+        </Route>
       </Route>
-       {/* Accessible to everyone */}
-      < Route  path="/about"  element={<About/>}/>
-      < Route  path="/"       element={<Home/>}/>
 
+      {/* Publicly accessible routes */}
+      <Route path="/about" element={<About />} />
+      <Route path="/" element={<Home />} />
     </Routes>
   )
 }

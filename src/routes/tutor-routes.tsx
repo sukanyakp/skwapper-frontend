@@ -1,10 +1,12 @@
-import PendingApproval from "@/components/authentication/PendingApproval";
-import TutorSignup from "@/components/authentication/TutorSignup";
 import ProtectedRoute from "../routes/protected-routes";
 import { Route, Routes } from "react-router-dom";
 import TutorHome from "@/components/tutor/TutorHome";
-import { CreateTutorProfile } from "@/components/tutor/CreateTutorProfile";
 import TutorProfile from "@/components/tutor/TutorProfile";
+import TutorLayout from "@/components/layouts/TutorLayout";
+import CreateCourse from "@/components/tutor/CreateCourse";
+import CreateTutorProfile from "@/components/tutor/CreateTutorProfile";
+import EditTutorProfile from "@/components/tutor/EditTutorProfile";
+// import TutorLayout from
 
 const TutorRoutes = () => {
   return (
@@ -14,9 +16,15 @@ const TutorRoutes = () => {
 
       {/* Protect the pending-approval route */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/pending-approval" element={<PendingApproval />} />
+      <Route  element={<TutorLayout/>}>
+      
         <Route path="/create-profile" element ={<CreateTutorProfile/>}/>
         <Route path="/profile" element={<TutorProfile/>}/>
+        <Route path="/create-course" element={<CreateCourse />} />
+        <Route path="/profile/edit" element={<EditTutorProfile/>}/>
+
+
+      </Route>
       </Route>
     </Routes>
   );

@@ -1,5 +1,5 @@
-// components/ProfileForm.tsx
-import React from "react";
+import axiosInstance from "@/api/axios-instance";
+import React, { useEffect, useState } from "react";
 
 interface ProfileFormProps {
   formData: any;
@@ -9,6 +9,27 @@ interface ProfileFormProps {
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubmit, role }) => {
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await axiosInstance.get("/courses"); // expects list with 'category' field
+        const courses = res.data as { category: string }[]; // type assertion
+        const uniqueSkills = [...new Set(courses.map((course) => course.category))];
+        setAvailableSkills(uniqueSkills);
+        console.log(availableSkills , 'availableskills');
+        
+      } catch (error) {
+        console.error("Failed to fetch skills:", error);
+      }
+    };
+
+    if (role === "tutor") {
+      fetchSkills();
+    }
+  }, [role]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -55,16 +76,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
           className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
         />
       </div>
-      {/* student  specific field*/}
-       {role === "student" && (
-        <>
-         {/* Instrument */}
+
+      {/* Student-specific field */}
+      {role === "student" && (
         <div className="mb-4">
           <label className="block text-sm mb-1">Instrument</label>
           <select
             name="instrument"
             value={formData.instrument}
-            required 
+            required
             onChange={handleChange}
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
           >
@@ -77,16 +97,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
             <option value="Other">Other</option>
           </select>
         </div>
-        
-        </>
+      )}
 
-
-        )}
-
-          
       {/* Tutor-specific fields */}
       {role === "tutor" && (
         <>
+          {/* Title */}
           <div className="mb-4">
             <label className="block text-sm mb-1">Title</label>
             <input
@@ -98,15 +114,32 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
             />
           </div>
 
+          {/* Skills (multi-select) */}
           <div className="mb-4">
             <label className="block text-sm mb-1">Skills</label>
-            <input
+            <select
+              multiple
               name="skills"
               value={formData.skills}
-              onChange={handleChange}
-              required
+              onChange={(e) => {
+                const selected = Array.from(e.target.selectedOptions, (option) => option.value);
+                setFormData((prev: any) => ({ ...prev, skills: selected }));
+              }}
               className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
-            />
+            >
+              {availableSkills.length === 0 ? (
+                <option disabled>Loading...</option>
+              ) : (
+                availableSkills.map((skill, idx) => (
+                  <option key={idx} value={skill}>
+                    {skill}
+                  </option>
+                ))
+              )}
+            </select>
+            <p className="text-xs text-gray-400 mt-1">
+              Hold Ctrl (Windows) or ⌘ (Mac) to select multiple
+            </p>
           </div>
         </>
       )}
@@ -116,10 +149,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         <label className="block text-sm mb-1">Experience (in years)</label>
         <input
           name="experience"
-          onChange={handleChange}
-          value={formData.experience}
           type="number"
           min="0"
+          value={formData.experience}
+          onChange={handleChange}
           className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
         />
       </div>

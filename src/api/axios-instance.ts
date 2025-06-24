@@ -1,18 +1,16 @@
-import axios from "axios";
-import basicAxiosInstance from './basic-axios-instance'
 import { toast } from "sonner";
+import axios from "axios";
+import basicAxiosInstance from "./basic-axios-instance";
 
-// create an axios instance 
-
+// Create an axios instance
 const axiosInstance = axios.create({
     baseURL : 'http://localhost:3000',
     withCredentials : true  
 })
 
 
-const refreshToken = async ()=>{
+const refreshToken = async () => {
     try {
-
         const res = await basicAxiosInstance.get(
             '/auth/refresh-token',
             {withCredentials : true}
@@ -26,82 +24,66 @@ const refreshToken = async ()=>{
     } catch (error : any) {
         throw error
     }
-}
+};
 
-
+// Requsest Interceptors
 axiosInstance.interceptors.request.use(
-    (config) : any =>{
-        const role = localStorage.getItem("role");
+    (config): any => {
+        const accessToken = localStorage.getItem("token");
 
-  let accessToken : string | null = null;
-  if (role === "admin") {
-    accessToken = localStorage.getItem("admin_token");
-  } else if (role === "student") {
-    accessToken = localStorage.getItem("student_token");
-  } else if (role === "tutor") {
-    accessToken = localStorage.getItem("tutor_token");
-  }
-
-        
-
-        if(accessToken){
-            config.headers.Authorization = `Bearer ${accessToken}`
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`; // set accessToken to authorization header
         }
 
-        return config
+        return config;
     },
     (err) => {
-        return Promise.reject(err)
+        return Promise.reject(err);
     }
-)
+);
 
+// Response Interceptors
 axiosInstance.interceptors.response.use(
-    (res) => {
-        return res
+    (resp) => {
+        return resp;
     },
     async (err) => {
-        const originalRequest = err.config ;
+        const originalRequest = err.config;
 
-        if(
-            err.response && 
-            err.response.status === 403 && 
+        if (
+            err.response &&
+            err.response.status === 403 &&
             !originalRequest._retry
-        ){
-                originalRequest._retry = true
+        ) {
+            originalRequest._retry = true;
 
-                try {
+            try {
+                const accessToken = await refreshToken();
 
-                    const accessToken = await refreshToken();
+                originalRequest.headers.Authorization = `Bearer ${accessToken}`; 
 
-                    originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                return axiosInstance(originalRequest);
+            } catch (err: any) {
+                console.log(err);
+                
+                toast( "Token expired. Please login again!" );
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
 
-                    return axiosInstance(originalRequest);
-                    
-                } catch (error : any) {
-                    console.log(error);
-                     toast( "Token expired. Please login again!" );
-                     const role = localStorage.getItem("role");
-  if (role === "admin") {
-     localStorage.removeItem("admin_token");
-      window.location.href = "/admin/login";
-      return
-  } else if (role === "student") {
-    localStorage.removeItem("student_token");
-     window.location.href = "/login";
-     return
-  } else if (role === "tutor") {
-    localStorage.removeItem("tutor_token");
-     window.location.href = "/login";
-     return
-  }
-
-
-                    
-                }
+              const res =  localStorage.getItem("Admin")
+              if(res){
+                  window.location.href = "/admin/login";
+                    return;
+              }else{
+                  window.location.href = "/login";
+                    return;
+              }
+              
+            }
         }
 
-         return Promise.reject(err); // For other errors, reject the promise
+        return Promise.reject(err); // For other errors, reject the promise
     }
-)
+);
 
 export default axiosInstance;

@@ -20,7 +20,7 @@ const TutorSignup = () => {
       try {
         const res = await checkTutorStatus();
         if (res?.data?.hasApplied && !res.data.approved) {
-          navigate("/tutor/pending-approval", { replace: true });
+          navigate("/pending-approval", { replace: true });
         }
       } catch (error) {
         console.error("Failed to check tutor status", error);
@@ -52,7 +52,7 @@ const TutorSignup = () => {
       // Check again before submitting to avoid duplicate submissions
       const statusRes = await checkTutorStatus();
       if (statusRes?.data?.hasApplied) {
-        navigate("/tutor/pending-approval", { replace: true });
+        navigate("/pending-approval", { replace: true });
         return;
       }
 
@@ -66,13 +66,13 @@ const TutorSignup = () => {
       const res = await registerTutor(formData);
 
       if (res?.status === 201) {
-        navigate("/tutor/pending-approval");
+        navigate("/pending-approval");
       } else {
         setMessage("Failed to submit. Please try again later.");
       }
     } catch (err: any) {
       if (err.response?.status === 409) {
-        navigate("/tutor/pending-approval", { replace: true });
+        navigate("/pending-approval", { replace: true });
       } else if (err.response) {
         setMessage(err.response.data?.message || "Submission failed.");
       } else {

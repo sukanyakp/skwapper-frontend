@@ -14,7 +14,6 @@ import AdminUsers from "@/components/admin/AdminUsers";
 const AdminRoutes = () => {
   return (
     <Routes>
-
       
       <Route  element={<PublicAdminRoute/>}>
       <Route path="/login" element={<AdminLogin />} />

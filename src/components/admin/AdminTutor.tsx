@@ -25,8 +25,8 @@ const AdminTutors = () => {
 
   const fetchApplications = async () => {
     try {
+      console.log( 'fetch all details .. ');
       const response = await axiosInstance.get("/admin/tutor-applications");
-      console.log(response.data , 'fetch all details .. ');
       
       setApplications(response.data);
     } catch (err) {

@@ -50,12 +50,16 @@ export default function AdminLogin() {
       
       dispatch(loginSuccess({admin : res?.data.user ,accessToken : res?.data.token})); // reloading issue solved
 
+      console.log();
+      
+
 
       // Navigate to dashboard
       navigate("/admin/dashboard");
     } catch (err) {
       console.error("Login failed", err);
       setApiError("Invalid credentials");
+      navigate("/admin/login")
     } finally {
       setLoading(false);
     }

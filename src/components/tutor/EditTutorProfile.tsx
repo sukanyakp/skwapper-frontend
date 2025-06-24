@@ -1,90 +1,117 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
+import { useEffect, useState } from "react";
 import axiosInstance from "@/api/axios-instance";
+import { useNavigate } from "react-router-dom";
 
-const CreateStudentProfile = () => {
-  const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.auth.user);
-
-  const [availableInstruments, setAvailableInstruments] = useState<string[]>([]);
-
+const EditTutorProfile = () => {
   const [formData, setFormData] = useState({
-    name: user?.name || "",
+    name: "",
     bio: "",
-    instrument: "",
+    title: "",
+    skills: [] as string[],
     experience: "",
     location: "",
     image: null as File | null,
+    profileImage: "", // existing image URL
   });
 
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchInstruments = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch current profile
+        const profileRes = await axiosInstance.get("/tutor/profile");
+        const data = profileRes.data;
+
+        setFormData({
+          name: data.name || "",
+          bio: data.bio || "",
+          title: data.title || "",
+          skills:
+            typeof data.skills === "string"
+              ? data.skills.split(",").map((s: string) => s.trim())
+              : data.skills || [],
+          experience: data.experience || "",
+          location: data.location || "",
+          image: null,
+          profileImage: data.profileImage || "",
+        });
+
+        // Fetch skills
         const res = await axiosInstance.get("/courses");
-        const courses = res.data as { title: string }[];
-        const uniqueTitles = [...new Set(courses.map((course) => course.title))];
-        setAvailableInstruments(uniqueTitles);
+          const coursesRes = res.data as { title : string }[];
+        const uniqueSkills = [
+          ...new Set(coursesRes.map((course: any) => course.title)),
+        ];
+        setAvailableSkills(uniqueSkills);
       } catch (err) {
-        console.error("Failed to fetch instruments:", err);
+        console.error("Failed to fetch data:", err);
       }
     };
 
-    fetchInstruments();
+    fetchData();
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSkillsChange = (value: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      skills: checked
+        ? [...prev.skills, value]
+        : prev.skills.filter((s) => s !== value),
+    }));
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, image: e.target.files![0] }));
+      setFormData((prev) => ({
+        ...prev,
+        image: e.target.files![0],
+      }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("bio", formData.bio);
-      payload.append("instrument", formData.instrument);
+      payload.append("title", formData.title);
       payload.append("experience", formData.experience);
       payload.append("location", formData.location);
+      formData.skills.forEach((skill) => payload.append("skills", skill));
       if (formData.image) {
         payload.append("image", formData.image);
       }
 
-      const res = await axiosInstance.post("/user/profile", payload, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await axiosInstance.put("/tutor/profile", payload, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Student profile created:", res.data);
-      navigate("/profile");
+      navigate("/tutor/profile"); // Or show a success message
     } catch (err) {
-      console.error("Failed to create student profile:", err);
+      console.error("Failed to update profile:", err);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
         className="bg-black/70 p-8 rounded-xl max-w-xl w-full border border-gray-700 shadow-xl"
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-cyan-400">
-          Create Your Profile
+          Edit Profile
         </h2>
 
-        {/* Name */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Name</label>
           <input
@@ -96,7 +123,6 @@ const CreateStudentProfile = () => {
           />
         </div>
 
-        {/* Bio */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Bio</label>
           <textarea
@@ -104,31 +130,41 @@ const CreateStudentProfile = () => {
             value={formData.bio}
             onChange={handleChange}
             rows={3}
-            placeholder="Tell us a bit about yourself..."
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
           />
         </div>
 
-        {/* Instrument (Dynamic Single-Select) */}
         <div className="mb-4">
-          <label className="block text-sm mb-1">Instrument</label>
-          <select
-            name="instrument"
-            value={formData.instrument}
+          <label className="block text-sm mb-1">Title</label>
+          <input
+            name="title"
+            value={formData.title}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
-          >
-            <option value="">Select an instrument</option>
-            {availableInstruments.map((title, idx) => (
-              <option key={idx} value={title}>
-                {title}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
-        {/* Experience */}
+        <div className="mb-4">
+          <label className="block text-sm mb-1">Skills</label>
+          <div className="grid grid-cols-2 gap-2">
+            {availableSkills.map((skill, idx) => (
+              <label key={idx} className="flex items-center space-x-2 text-sm">
+                <input
+                  type="checkbox"
+                  value={skill}
+                  checked={formData.skills.includes(skill)}
+                  onChange={(e) =>
+                    handleSkillsChange(skill, e.target.checked)
+                  }
+                  className="accent-cyan-500"
+                />
+                <span>{skill}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
         <div className="mb-4">
           <label className="block text-sm mb-1">Experience (in years)</label>
           <input
@@ -141,7 +177,6 @@ const CreateStudentProfile = () => {
           />
         </div>
 
-        {/* Location */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Location</label>
           <input
@@ -152,7 +187,6 @@ const CreateStudentProfile = () => {
           />
         </div>
 
-        {/* Profile Picture */}
         <div className="mb-6">
           <label className="block text-sm mb-1">Profile Picture</label>
           <input
@@ -161,25 +195,28 @@ const CreateStudentProfile = () => {
             onChange={handleImageChange}
             className="w-full text-white"
           />
-          {formData.image && (
+          {(formData.image || formData.profileImage) && (
             <img
-              src={URL.createObjectURL(formData.image)}
+              src={
+                formData.image
+                  ? URL.createObjectURL(formData.image)
+                  : formData.profileImage
+              }
               alt="Preview"
               className="w-20 h-20 rounded-full mt-2 object-cover"
             />
           )}
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 rounded-md text-white font-semibold transition"
         >
-          Save Profile
+          Update Profile
         </button>
       </form>
     </div>
   );
 };
 
-export default CreateStudentProfile;
+export default EditTutorProfile;
