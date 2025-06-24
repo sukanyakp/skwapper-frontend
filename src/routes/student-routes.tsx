@@ -1,3 +1,7 @@
+import { Route, Routes } from 'react-router-dom'
+import PublicRoutes from './public-routes'
+import ProtectedRoute from './protected-routes'
+
 import ForgotPassword from '@/components/authentication/ForgotPassword'
 import Login from '@/components/authentication/Login'
 import ResetPassword from '@/components/authentication/ResetPassword'
@@ -5,12 +9,8 @@ import Signup from '@/components/authentication/Signup'
 import VerifyOtp from '@/components/authentication/VerifyOtp'
 import About from '@/components/student/About'
 import Home from '@/components/student/Home'
-
-import { Route, Routes } from 'react-router-dom'
-import PublicRoutes from './public-routes'
 import CreateProfilePage from '@/components/student/CreateProfile'
 import UserProfile from '@/components/student/UserProfile'
-import ProtectedRoute from './protected-routes'
 import TutorSignup from '@/components/authentication/TutorSignup'
 import StudentLayout from '../components/layouts/StudentLayout' 
 import PendingApproval from '@/components/authentication/PendingApproval'
@@ -19,9 +19,7 @@ import Tutors from '@/components/student/Tutors'
 import TutorDetails from '@/components/student/TutorDetails'
 
 import NotFound from '@/components/common/NotFound'
-import Hello from '@/components/student/Hello'
-import TutorDetail from '@/components/student/TutorDetail'
-import TutorDet from '@/components/student/Hello'
+
 
 const StudentRoutes = () => {
   return (

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "@/api/axios-instance";
+import { toast } from "sonner";
 
 interface Tutor {
   _id: string;
@@ -41,11 +42,17 @@ const TutorDetails = () => {
     fetchTutor();
   }, [tutorId]);
 
-  // const handleRequest = async()=>{
+  const handleRequestSession = async ()=>{
+    try {
+      const res = await axiosInstance.post(`user/tutor/request/${tutorId}`);
+      console.log(res.data);
+      toast("Video session request sent successfully!")
+    } catch (error) {
+        console.error("Failed to request session:", error);
+      toast("Something went wrong while sending the request.");
+    }
+  }
 
-  //   const res = await axiosInstance.post('/')
-
-  // }
 
   if (loading) {
     return <div className="text-white text-center py-10">Loading tutor...</div>;
@@ -74,7 +81,7 @@ const TutorDetails = () => {
         <p className="mb-2"><strong>Availability:</strong> {tutor.availability}</p>
         <p className="mb-4"><strong>Hourly Rate:</strong> ₹{tutor.hourlyRate}</p>
 
-        <button className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 rounded-md font-semibold transition">
+        <button onClick={handleRequestSession} className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 rounded-md font-semibold transition">
           Request Video Session
         </button>
       </div>
