@@ -6,6 +6,7 @@ import TutorLayout from "@/components/layouts/TutorLayout";
 import CreateCourse from "@/components/tutor/CreateCourse";
 import CreateTutorProfile from "@/components/tutor/CreateTutorProfile";
 import EditTutorProfile from "@/components/tutor/EditTutorProfile";
+import MyCourses from "@/components/tutor/MyCourses";
 // import TutorLayout from
 
 const TutorRoutes = () => {
@@ -22,6 +23,8 @@ const TutorRoutes = () => {
         <Route path="/profile" element={<TutorProfile/>}/>
         <Route path="/create-course" element={<CreateCourse />} />
         <Route path="/profile/edit" element={<EditTutorProfile/>}/>
+
+        <Route path="/courses" element={<MyCourses/>}/>
 
 
       </Route>

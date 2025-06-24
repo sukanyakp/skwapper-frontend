@@ -5,7 +5,7 @@ import axiosInstance from "@/api/axios-instance";
 
 interface Course {
   _id: string;
-  title: string;
+  category: string;
   description: string;
 }
 
@@ -51,14 +51,14 @@ const Courses = () => {
           <table className="w-full table-auto">
             <thead className="bg-gray-100 text-left">
               <tr>
-                <th className="p-3">Title</th>
+                <th className="p-3">Category</th>
                 <th className="p-3">Description</th>
               </tr>
             </thead>
             <tbody>
               {courses.map((course) => (
                 <tr key={course._id} className="border-b hover:bg-gray-50">
-                  <td className="p-3 font-semibold">{course.title}</td>
+                  <td className="p-3 font-semibold">{course.category}</td>
                   <td className="p-3 text-gray-700">{course.description}</td>
                 </tr>
               ))}

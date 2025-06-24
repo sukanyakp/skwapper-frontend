@@ -14,6 +14,7 @@ import ProtectedRoute from './protected-routes'
 import TutorSignup from '@/components/authentication/TutorSignup'
 import StudentLayout from '../components/layouts/StudentLayout' 
 import PendingApproval from '@/components/authentication/PendingApproval'
+import AllCourses from '@/components/courses/AllCourses'
 
 const StudentRoutes = () => {
   return (
@@ -35,12 +36,14 @@ const StudentRoutes = () => {
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/apply-tutor" element={<TutorSignup />} />
           <Route path="/pending-approval" element={<PendingApproval />} />
+              <Route path='/courses' element= {<AllCourses/>}/>
         </Route>
       </Route>
 
       {/* Publicly accessible routes */}
       <Route path="/about" element={<About />} />
       <Route path="/" element={<Home />} />
+  
     </Routes>
   )
 }

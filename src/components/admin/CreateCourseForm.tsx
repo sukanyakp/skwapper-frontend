@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const CreateCourseForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: "",
+    category: "",
     description: "",
   });
 
@@ -31,9 +31,9 @@ const CreateCourseForm = () => {
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
         <input
           type="text"
-          name="title"
-          placeholder="Course Title"
-          value={formData.title}
+          name="category"
+          placeholder="Course category"
+          value={formData.category}
           onChange={handleChange}
           className="w-full p-2 border rounded"
           required

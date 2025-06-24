@@ -1,4 +1,5 @@
 import { registerTutor, checkTutorStatus } from "@/api/tutorApi";
+import axiosInstance from "@/api/axios-instance";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,13 +7,29 @@ const TutorSignup = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  // Additional form fields
-  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState("");
   const [experience, setExperience] = useState("");
+
+  // Fetch available skills from /courses
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await axiosInstance.get("/courses");
+         const courses = res.data as { category: string }[];
+        const courseCategory = courses.map((course: any) => course.category);
+        const uniquecategorys = [...new Set(courseCategory)];
+        setAvailableSkills(uniquecategorys);
+      } catch (error) {
+        console.error("Failed to fetch skills", error);
+      }
+    };
+    fetchSkills();
+  }, []);
 
   // Check if already applied
   useEffect(() => {
@@ -41,15 +58,13 @@ const TutorSignup = () => {
       return;
     }
 
-    if (!title || !bio || !skills || !experience) {
+    if (!category || !bio || !skills || !experience) {
       setMessage("Please fill in all the fields.");
       return;
     }
 
     try {
       setIsSubmitting(true);
-
-      // Check again before submitting to avoid duplicate submissions
       const statusRes = await checkTutorStatus();
       if (statusRes?.data?.hasApplied) {
         navigate("/pending-approval", { replace: true });
@@ -58,7 +73,7 @@ const TutorSignup = () => {
 
       const formData = new FormData();
       Array.from(files).forEach((file) => formData.append("documents", file));
-      formData.append("title", title);
+      formData.append("category", category);
       formData.append("bio", bio);
       formData.append("skills", skills);
       formData.append("experience", experience);
@@ -96,10 +111,10 @@ const TutorSignup = () => {
 
         <input
           type="text"
-          placeholder="Title (e.g. Physics Tutor)"
+          placeholder="category (e.g. Music Tutor)"
           className="w-full p-2 rounded text-black"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
         />
 
         <textarea
@@ -109,13 +124,20 @@ const TutorSignup = () => {
           onChange={(e) => setBio(e.target.value)}
         />
 
-        <input
-          type="text"
-          placeholder="Skills (e.g. React, Python, Algebra)"
-          className="w-full p-2 rounded text-black"
+        {/* Skill Dropdown */}
+        <select
           value={skills}
           onChange={(e) => setSkills(e.target.value)}
-        />
+          className="w-full p-2 rounded text-black"
+          required
+        >
+          <option value="">Select a skill</option>
+          {availableSkills.map((skill) => (
+            <option key={skill} value={skill}>
+              {skill}
+            </option>
+          ))}
+        </select>
 
         <input
           type="number"

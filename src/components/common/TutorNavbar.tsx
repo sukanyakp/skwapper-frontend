@@ -35,7 +35,7 @@ const handleProfileRedirect = async () => {  // THIS is the main cause of profil
 
       {/* Navigation Links */}
       <div className="flex items-center space-x-6 text-sm">
-        <Link to="/" className="text-gray-300 hover:text-cyan-400 transition">
+        <Link to="/tutor/home" className="text-gray-300 hover:text-cyan-400 transition">
           Home
         </Link>
 
@@ -45,7 +45,7 @@ const handleProfileRedirect = async () => {  // THIS is the main cause of profil
           </Link>
         )}
 
-        <Link to="/courses" className="text-gray-300 hover:text-cyan-400 transition">
+        <Link to="/tutor/courses" className="text-gray-300 hover:text-cyan-400 transition">
           Courses
         </Link>
         <Link to="/tutors" className="text-gray-300 hover:text-cyan-400 transition">
