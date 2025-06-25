@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+
 import Footer from "../common/Footer";
 import TutorNavbar from "../common/TutorNavbar";
+import { ActionButton } from "../common/ActionButton";
+import { SummaryCard } from "../common/SummaryCard";
+import { CourseCard } from "../common/CourseCard";
 
 const TutorHome = () => {
   return (
@@ -27,7 +30,7 @@ const TutorHome = () => {
           <ActionButton text="Edit Profile" to="/tutor/profile/edit" />
           <ActionButton text="My Courses" to="/tutor/courses" />
           <ActionButton text="View Student Requests" to="/tutor/requests" />
-          <ActionButton text="Schedule a Lecture" to="/tutor/schedule" />
+          <ActionButton text="Set Your Availability" to="/tutor/availability" />
         </div>
       </section>
 
@@ -61,39 +64,7 @@ const TutorHome = () => {
   );
 };
 
-// Summary Card
-const SummaryCard = ({ title, value }: { title: string; value: string }) => (
-  <div className="bg-black/80 p-6 rounded-xl border border-gray-700 shadow-lg">
-    <h4 className="text-lg font-semibold mb-2">{title}</h4>
-    <p className="text-2xl font-bold text-cyan-400">{value}</p>
-  </div>
-);
 
-// Action Button
-const ActionButton = ({ text, to }: { text: string; to: string }) => (
-  <Link to={to}>
-    <button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white px-5 py-3 rounded-xl shadow-md text-sm transition-transform transform hover:scale-105">
-      {text}
-    </button>
-  </Link>
-);
-
-// Course Card
-const CourseCard = ({ course }: { course: any }) => (
-  <div className="bg-black/80 p-5 rounded-xl border border-gray-700 hover:shadow-xl transition">
-    <div className="h-40 bg-gray-700 rounded-lg mb-4 flex items-center justify-center text-white text-sm">
-      Thumbnail Image
-    </div>
-    <h4 className="text-lg font-semibold mb-1">{course.title}</h4>
-    <p className="text-sm text-gray-400 mb-2">By {course.instructor}</p>
-    <span className="inline-block bg-cyan-700 text-xs px-2 py-1 rounded-full mb-3">
-      {course.category}
-    </span>
-    <button className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2 text-sm rounded-md">
-      View Details
-    </button>
-  </div>
-);
 
 // Sample Data
 const topRatedCourses = [

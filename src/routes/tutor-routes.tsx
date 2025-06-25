@@ -8,6 +8,8 @@ import CreateTutorProfile from "@/components/tutor/CreateTutorProfile";
 import EditTutorProfile from "@/components/tutor/EditTutorProfile";
 import MyCourses from "@/components/tutor/MyCourses";
 import TutorRequests from "@/components/tutor/TutorRequests";
+import TutorSchedule from "@/components/tutor/TutorSchedule";
+import TutorAvailability from "@/components/tutor/TutorAvailability";
 // import TutorLayout from
 
 const TutorRoutes = () => {
@@ -27,6 +29,9 @@ const TutorRoutes = () => {
 
         <Route path="/courses" element={<MyCourses/>}/>
         <Route path="/requests" element={<TutorRequests/>}/>
+        <Route path="/schedule" element={<TutorSchedule />} />
+
+        <Route path="/availability" element={<TutorAvailability/>}/>
 
 
       </Route>
