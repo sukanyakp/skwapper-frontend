@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/api/axios-instance";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import {profileSchema} from "../../validations/tutor/createProfile"
+import  { z } from "zod";
+
+type FormData = z.infer<typeof profileSchema>;
+
 
 const EditTutorProfile = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     bio: "",
-    title: "",
+    category: "",
     skills: [] as string[],
     experience: "",
     location: "",
     image: null as File | null,
-    profileImage: "", // existing image URL
   });
 
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -27,7 +32,7 @@ const EditTutorProfile = () => {
         setFormData({
           name: data.name || "",
           bio: data.bio || "",
-          title: data.title || "",
+          category: data.category || "",
           skills:
             typeof data.skills === "string"
               ? data.skills.split(",").map((s: string) => s.trim())
@@ -35,14 +40,13 @@ const EditTutorProfile = () => {
           experience: data.experience || "",
           location: data.location || "",
           image: null,
-          profileImage: data.profileImage || "",
         });
 
         // Fetch skills
         const res = await axiosInstance.get("/courses");
-          const coursesRes = res.data as { title : string }[];
+          const coursesRes = res.data as { category : string }[];
         const uniqueSkills = [
-          ...new Set(coursesRes.map((course: any) => course.title)),
+          ...new Set(coursesRes.map((course: any) => course.category)),
         ];
         setAvailableSkills(uniqueSkills);
       } catch (err) {
@@ -81,10 +85,13 @@ const EditTutorProfile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+
+      profileSchema.parse(formData);
+
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("bio", formData.bio);
-      payload.append("title", formData.title);
+      // payload.append("category", formData.category);
       payload.append("experience", formData.experience);
       payload.append("location", formData.location);
       formData.skills.forEach((skill) => payload.append("skills", skill));
@@ -92,12 +99,18 @@ const EditTutorProfile = () => {
         payload.append("image", formData.image);
       }
 
-      await axiosInstance.put("/tutor/profile", payload, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axiosInstance.put("/tutor/profile", payload);
+      toast("Update successful")
 
-      navigate("/tutor/profile"); // Or show a success message
+      navigate("/tutor/profile"); 
+
     } catch (err) {
+      if (err instanceof z.ZodError) {
+        console.error("Validation Error:", err.errors);
+        toast(err.errors[0]?.message);
+      } else {
+        console.error("Failed to create tutor profile:", err);
+      }
       console.error("Failed to update profile:", err);
     }
   };
@@ -107,6 +120,7 @@ const EditTutorProfile = () => {
       <form
         onSubmit={handleSubmit}
         className="bg-black/70 p-8 rounded-xl max-w-xl w-full border border-gray-700 shadow-xl"
+        noValidate
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-cyan-400">
           Edit Profile
@@ -135,10 +149,10 @@ const EditTutorProfile = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm mb-1">Title</label>
+          <label className="block text-sm mb-1">Category</label>
           <input
-            name="title"
-            value={formData.title}
+            name="category"
+            value={formData.category}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
@@ -195,13 +209,9 @@ const EditTutorProfile = () => {
             onChange={handleImageChange}
             className="w-full text-white"
           />
-          {(formData.image || formData.profileImage) && (
-            <img
-              src={
-                formData.image
-                  ? URL.createObjectURL(formData.image)
-                  : formData.profileImage
-              }
+            {formData.image && formData.image.size > 0 && (
+          <img
+              src={URL.createObjectURL(formData.image)}
               alt="Preview"
               className="w-20 h-20 rounded-full mt-2 object-cover"
             />

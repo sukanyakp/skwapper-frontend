@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import {
   LogOut,
   Book,
@@ -9,8 +10,19 @@ import {
   DollarSign,
   GraduationCap,
 } from "lucide-react";
+import { logout } from "../../store/slices/adminSlice"; 
 
 const AdminSidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("user")
+    navigate("/admin/login");
+  };
+
   return (
     <aside className="h-screen w-64 bg-white text-gray-800 shadow-md flex flex-col p-4 border-r">
       <h1 className="text-2xl font-bold mb-8 text-center text-indigo-600">Skwapper</h1>
@@ -71,13 +83,14 @@ const AdminSidebar = () => {
           Feedbacks
         </Link>
 
-        <Link
-          to="/logout"
+        {/* ✅ Logout Button */}
+        <button
+          onClick={handleLogout}
           className="flex items-center gap-3 mt-auto hover:bg-gray-100 p-2 rounded text-red-600"
         >
           <LogOut size={20} />
           Logout
-        </Link>
+        </button>
       </nav>
     </aside>
   );

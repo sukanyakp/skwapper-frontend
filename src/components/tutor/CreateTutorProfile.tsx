@@ -1,30 +1,34 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/api/axios-instance";
 import { useNavigate } from "react-router-dom";
+import { profileSchema } from "../../validations/tutor/createProfile";
+import z from "zod";
+import { toast } from "sonner";
+
+type FormData = z.infer<typeof profileSchema>;
 
 const CreateTutorProfile = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     bio: "",
     category: "",
-    skills: [] as string[],
+    skills: [],
     experience: "",
     location: "",
-    image: null as File | null,
+    image: new File([], "") ,
   });
 
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSkills = async () => {
       try {
         const res = await axiosInstance.get("/courses");
-        const courses = res.data as { category : string }[];
+        const courses = res.data as { category: string }[];
         const uniqueSkills = [...new Set(courses.map((course) => course.category))];
         setAvailableSkills(uniqueSkills);
-        console.log(availableSkills , 'availableSkills');
-        
       } catch (error) {
         console.error("Failed to fetch skills:", error);
       }
@@ -40,9 +44,15 @@ const CreateTutorProfile = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSkillsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = Array.from(e.target.selectedOptions, (option) => option.value);
-    setFormData((prev) => ({ ...prev, skills: selected }));
+  const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+    setFormData((prev) => ({
+      ...prev,
+      skills: checked
+        ? [...prev.skills, value]
+        : prev.skills.filter((s) => s !== value),
+    }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +63,11 @@ const CreateTutorProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
+      profileSchema.parse(formData);
+
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("bio", formData.bio);
@@ -71,7 +85,14 @@ const CreateTutorProfile = () => {
 
       navigate("/tutor/home");
     } catch (err) {
-      console.error("Failed to create tutor profile:", err);
+      if (err instanceof z.ZodError) {
+        console.error("Validation Error:", err.errors);
+        toast(err.errors[0]?.message);
+      } else {
+        console.error("Failed to create tutor profile:", err);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,9 +101,11 @@ const CreateTutorProfile = () => {
       <form
         onSubmit={handleSubmit}
         className="bg-black/70 p-8 rounded-xl max-w-xl w-full border border-gray-700 shadow-xl"
+        noValidate
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-cyan-400">Create Tutor Profile</h2>
 
+        {/* Name */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Name</label>
           <input
@@ -94,6 +117,7 @@ const CreateTutorProfile = () => {
           />
         </div>
 
+        {/* Bio */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Bio</label>
           <textarea
@@ -105,6 +129,7 @@ const CreateTutorProfile = () => {
           />
         </div>
 
+        {/* Category */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Category</label>
           <input
@@ -116,37 +141,26 @@ const CreateTutorProfile = () => {
           />
         </div>
 
+        {/* Skills */}
         <div className="mb-4">
-  <label className="block text-sm mb-2">Skills</label>
-  <div className="grid grid-cols-2 gap-2">
-    {availableSkills.map((skill, idx) => (
-      <label key={idx} className="flex items-center space-x-2 text-sm">
-        <input
-          type="checkbox"
-          value={skill}
-          checked={formData.skills.includes(skill)}
-          onChange={(e) => {
-            const checked = e.target.checked;
-            const value = e.target.value;
-            setFormData((prev) => ({
-              ...prev,
-              skills: checked
-                ? [...prev.skills, value]
-                : prev.skills.filter((s) => s !== value),
-            }));
-          }}
-          className="accent-cyan-500"
-        />
-        <span>{skill}</span>
-      </label>
-    ))}
-  </div>
-</div>
+          <label className="block text-sm mb-2">Skills</label>
+          <div className="grid grid-cols-2 gap-2">
+            {availableSkills.map((skill, idx) => (
+              <label key={idx} className="flex items-center space-x-2 text-sm">
+                <input
+                  type="checkbox"
+                  value={skill}
+                  checked={formData.skills.includes(skill)}
+                  onChange={handleSkillsChange}
+                  className="accent-cyan-500"
+                />
+                <span>{skill}</span>
+              </label>
+            ))}
+          </div>
+        </div>
 
-
-
-
-
+        {/* Experience */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Experience (in years)</label>
           <input
@@ -159,6 +173,7 @@ const CreateTutorProfile = () => {
           />
         </div>
 
+        {/* Location */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Location</label>
           <input
@@ -169,6 +184,7 @@ const CreateTutorProfile = () => {
           />
         </div>
 
+        {/* Profile Picture */}
         <div className="mb-6">
           <label className="block text-sm mb-1">Profile Picture</label>
           <input
@@ -177,7 +193,7 @@ const CreateTutorProfile = () => {
             onChange={handleImageChange}
             className="w-full text-white"
           />
-          {formData.image && (
+          {formData.image && formData.image.size > 0 && (
             <img
               src={URL.createObjectURL(formData.image)}
               alt="Preview"
@@ -186,11 +202,15 @@ const CreateTutorProfile = () => {
           )}
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 rounded-md text-white font-semibold transition"
+          disabled={loading}
+          className={`w-full py-2 rounded-md text-white font-semibold transition ${
+            loading ? "bg-cyan-400 cursor-not-allowed" : "bg-cyan-600 hover:bg-cyan-700"
+          }`}
         >
-          Save Profile
+          {loading ? "Saving..." : "Save Profile"}
         </button>
       </form>
     </div>

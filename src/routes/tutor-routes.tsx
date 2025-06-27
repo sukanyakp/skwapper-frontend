@@ -10,6 +10,7 @@ import MyCourses from "@/components/tutor/MyCourses";
 import TutorRequests from "@/components/tutor/TutorRequests";
 import TutorSchedule from "@/components/tutor/TutorSchedule";
 import TutorAvailability from "@/components/tutor/TutorAvailability";
+import EnteredAvailability from "@/components/tutor/EnteredAvailability";
 // import TutorLayout from
 
 const TutorRoutes = () => {
@@ -32,6 +33,7 @@ const TutorRoutes = () => {
         <Route path="/schedule" element={<TutorSchedule />} />
 
         <Route path="/availability" element={<TutorAvailability/>}/>
+        <Route path="/availability/view" element={<EnteredAvailability/>} />
 
 
       </Route>

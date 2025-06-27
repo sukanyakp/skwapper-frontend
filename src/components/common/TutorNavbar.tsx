@@ -1,32 +1,32 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store/store";
-import axiosInstance from "../../api/axios-instance"; 
+import axiosInstance from "@/api/axios-instance";
+import { logout } from "../../store/slices/tutorSlice"
 
 const TutorNavbar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log(user , 'user at navbar');
-  
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-
-// Inside the Navbar component
-const handleProfileRedirect = async () => {  // THIS is the main cause of profile Redirect 
-  try {
-    const res = await axiosInstance.get("/tutor/profile");
-    // Assuming success means profile exists
-    navigate("/tutor/profile"); // or wherever you want to show existing profile
-  } catch (err: any) {
-    if (err.response?.status === 404) {
-      // No profile exists
-      navigate("/tutor/create-profile");
-    } else {
-      console.error("Error checking profile:", err);
-      // Optional: show an error message or redirect to login
+  const handleProfileRedirect = async () => {
+    try {
+      const res = await axiosInstance.get("/tutor/profile");
+      navigate("/tutor/profile");
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        navigate("/tutor/create-profile");
+      } else {
+        console.error("Error checking profile:", err);
+      }
     }
-  }
-};
+  };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token"); // Or sessionStorage based on how you store it
+    navigate("/login");
+  };
 
   return (
     <nav className="flex justify-between items-center px-6 py-4 border-b border-gray-700 bg-black/80 backdrop-blur-md">
@@ -48,9 +48,7 @@ const handleProfileRedirect = async () => {  // THIS is the main cause of profil
         <Link to="/tutor/courses" className="text-gray-300 hover:text-cyan-400 transition">
           Courses
         </Link>
-        <Link to="/tutors" className="text-gray-300 hover:text-cyan-400 transition">
-          Tutors
-        </Link>
+
         <Link to="/chat" className="text-gray-300 hover:text-cyan-400 transition">
           Chat
         </Link>
@@ -62,13 +60,21 @@ const handleProfileRedirect = async () => {  // THIS is the main cause of profil
         )}
 
         {user ? (
-          <button
-            onClick={handleProfileRedirect}
-            className="w-9 h-9 rounded-full bg-cyan-600 text-white font-semibold flex items-center justify-center hover:bg-cyan-700 transition"
-            title="Go to Profile"
-          >
-            {user.name?.charAt(0).toUpperCase()}
-          </button>
+          <>
+            <button
+              onClick={handleProfileRedirect}
+              className="w-9 h-9 rounded-full bg-cyan-600 text-white font-semibold flex items-center justify-center hover:bg-cyan-700 transition"
+              title="Go to Profile"
+            >
+              {user.name?.charAt(0).toUpperCase()}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 rounded transition"
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <Link
             to="/signup"

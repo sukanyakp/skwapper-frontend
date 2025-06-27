@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/api/axios-instance";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,7 +28,6 @@ const UserProfile = () => {
     );
   }
 
-  // Convert comma-separated string to array if necessary
   const skills =
     typeof profile.skills === "string"
       ? profile.skills.split(",").map((s: string) => s.trim())
@@ -76,10 +77,19 @@ const UserProfile = () => {
             <strong>Location:</strong> {profile.location}
           </p>
         </div>
+
+        {/* Edit Button */}
+        <div className="text-center mt-8">
+          <button
+            onClick={() => navigate("/tutor/profile/edit")}
+            className="bg-cyan-600 hover:bg-cyan-700 px-6 py-2 rounded-md font-semibold text-white transition"
+          >
+            Edit Profile
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default UserProfile;
-  

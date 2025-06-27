@@ -44,7 +44,6 @@ const Signup = () => {
       setErrors(fieldErrors);
       return;
     }
-
     setLoading(true);
     try {
       const response = await signup(formData);

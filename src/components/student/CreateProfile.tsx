@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import axiosInstance from "@/api/axios-instance";
+import { profileSchema } from "@/validations/student/createProfile";
+import z from 'zod'
+import { toast } from "sonner";
+
+// Types for form data
+type FormData = z.infer<typeof profileSchema>;
 
 const CreateStudentProfile = () => {
   const navigate = useNavigate();
@@ -10,13 +16,13 @@ const CreateStudentProfile = () => {
 
   const [availableInstruments, setAvailableInstruments] = useState<string[]>([]);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: user?.name || "",
     bio: "",
     instrument: "",
-    experience: "",
+    // experience: "",
     location: "",
-    image: null as File | null,
+    image: new File([], "") ,
   });
 
   useEffect(() => {
@@ -47,38 +53,48 @@ const CreateStudentProfile = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      const payload = new FormData();
-      payload.append("name", formData.name);
-      payload.append("bio", formData.bio);
-      payload.append("instrument", formData.instrument);
-      payload.append("experience", formData.experience);
-      payload.append("location", formData.location);
-      if (formData.image) {
-        payload.append("image", formData.image);
-      }
+  try {
+    // Validate the form data
+    profileSchema.parse(formData);
 
-      const res = await axiosInstance.post("/user/profile", payload, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    const payload = new FormData();
+    payload.append("name", formData.name);
+    payload.append("bio", formData.bio);
+    payload.append("instrument", formData.instrument);
+    payload.append("location", formData.location);
+    if (formData.image) {
+      payload.append("image", formData.image);
+    }
 
-      console.log("Student profile created:", res.data);
-      navigate("/profile");
-    } catch (err) {
+    const res = await axiosInstance.post("/user/profile", payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Student profile created:", res.data);
+    navigate("/profile");
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      console.error("Validation failed:", err.errors);
+      toast.error(err.errors[0]?.message);
+    } else {
+      toast.error("Something went wrong while creating profile.");
       console.error("Failed to create student profile:", err);
     }
-  };
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
       <form
         onSubmit={handleSubmit}
         className="bg-black/70 p-8 rounded-xl max-w-xl w-full border border-gray-700 shadow-xl"
+        noValidate
       >
         <h2 className="text-2xl font-bold mb-6 text-center text-cyan-400">
           Create Your Profile
@@ -128,19 +144,6 @@ const CreateStudentProfile = () => {
           </select>
         </div>
 
-        {/* Experience */}
-        <div className="mb-4">
-          <label className="block text-sm mb-1">Experience (in years)</label>
-          <input
-            name="experience"
-            type="number"
-            min="0"
-            value={formData.experience}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
-          />
-        </div>
-
         {/* Location */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Location</label>
@@ -161,7 +164,7 @@ const CreateStudentProfile = () => {
             onChange={handleImageChange}
             className="w-full text-white"
           />
-          {formData.image && (
+       {formData.image instanceof File && formData.image.size > 0 && (
             <img
               src={URL.createObjectURL(formData.image)}
               alt="Preview"
