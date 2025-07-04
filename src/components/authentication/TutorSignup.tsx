@@ -20,7 +20,9 @@ const TutorSignup = () => {
     const fetchSkills = async () => {
       try {
         const res = await axiosInstance.get("/courses");
-         const courses = res.data as { category: string }[];
+        console.log(res , 'get whole courses');
+        
+         const courses = res.data.courses as { category: string }[];
         const courseCategory = courses.map((course: any) => course.category);
         const uniquecategorys = [...new Set(courseCategory)];
         setAvailableSkills(uniquecategorys);

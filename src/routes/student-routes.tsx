@@ -19,6 +19,9 @@ import Tutors from '@/components/student/Tutors'
 import TutorDetails from '@/components/student/TutorDetails'
 
 import NotFound from '@/components/common/NotFound'
+import Courses from '@/components/admin/Courses'
+import CourseDetails from '@/components/courses/CourseDetails'
+import RequestedSessions from '@/components/student/RequestedSessions'
 
 
 const StudentRoutes = () => {
@@ -33,6 +36,7 @@ const StudentRoutes = () => {
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        {/* <Route path='/courses' element={<Courses/>}/> */}
       </Route>
 
       {/* Protected Routes with Layout */}
@@ -43,8 +47,11 @@ const StudentRoutes = () => {
           <Route path="/apply-tutor" element={<TutorSignup />} />
           <Route path="/pending-approval" element={<PendingApproval />} />
               <Route path='/courses' element= {<AllCourses/>}/>
+              <Route path='/course/:id' element={<CourseDetails/>}/>
               <Route path='/tutors' element = {<Tutors/>}/>
               <Route path='/tutors/:tutorId' element= {<TutorDetails/>}/>
+              <Route path='/tutors/' element={<RequestedSessions/>}/> 
+              {/* change the route here  */}
         </Route>
       </Route>
 

@@ -76,6 +76,9 @@ const UserProfile = () => {
           <p>
             <strong>Location:</strong> {profile.location}
           </p>
+          <p>
+            <strong>Hourly Rate:</strong> ₹{profile.hourlyRate}
+          </p>
         </div>
 
         {/* Edit Button */}

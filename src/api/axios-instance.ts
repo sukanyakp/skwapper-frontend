@@ -4,9 +4,10 @@ import basicAxiosInstance from "./basic-axios-instance";
 
 // Create an axios instance
 const axiosInstance = axios.create({
-    baseURL : 'http://localhost:3000',
-    withCredentials : true  
-})
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
+
 
 
 const refreshToken = async () => {
@@ -34,6 +35,9 @@ axiosInstance.interceptors.request.use(
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`; // set accessToken to authorization header
         }
+
+        // console.log(process.env.FRONTEND_URL);
+        
 
         return config;
     },

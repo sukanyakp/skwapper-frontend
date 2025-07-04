@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "@/api/axios-instance";
 import { toast } from "sonner";
+import { loadStripe } from "@stripe/stripe-js";
 
 
 interface Tutor {
@@ -44,17 +45,61 @@ const TutorDetails = () => {
     fetchTutor();
   }, [tutorId]);
 
-  const handleRequestSession = async ()=>{
-    try {
-      const tUserId = tutor?.userId
-      const res = await axiosInstance.post(`user/tutor/request/${tUserId}`);
-      console.log(res.data);
-      toast("Video session request sent successfully!")
-    } catch (error) {
-        console.error("Failed to request session:", error);
-      toast("Something went wrong while sending the request.");
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!)
+
+  // const handleRequestSession = async ()=>{
+  //   try {
+  //     // const tUserId = tutor?.userId
+
+      
+  //     // const res = await axiosInstance.post(`user/tutor/request/${tUserId}`);
+  //     // console.log(res.data);
+      
+  //   // 1. Create payment order on backend
+  //     if(!tutor) return ; 
+  //     const paymentRes = await axiosInstance.post(`payment/create-order`,{
+  //       tutor : tutor
+  //     })
+
+  //     const sessionId = paymentRes.data.sessionId
+  //        const stripe = await stripePromise;
+  //   if (!stripe) {
+  //     throw new Error("Stripe failed to initialize");
+  //   }
+
+  //   await stripe.redirectToCheckout({ sessionId });
+
+
+
+  //     // toast("Video session request sent successfully!")
+  //   } catch (error) {
+  //       console.error("Failed to request session:", error);
+  //     toast("Something went wrong while sending the request.");
+  //   }
+  // }
+
+
+  const handleRequestSession = async () => {
+  try {
+    if (!tutor) return;
+
+    const paymentRes = await axiosInstance.post(`/payment/create-order`, {
+      tutor: tutor,
+    });
+
+    const sessionId = paymentRes.data.sessionId;
+
+    const stripe = await stripePromise;
+    if (!stripe) {
+      throw new Error("Stripe failed to initialize");
     }
+
+    await stripe.redirectToCheckout({ sessionId });
+  } catch (error) {
+    console.error("Failed to request session:", error);
+    toast("Something went wrong while sending the request.");
   }
+};
 
 
   if (loading) {

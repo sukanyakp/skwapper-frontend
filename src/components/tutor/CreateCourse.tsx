@@ -59,7 +59,7 @@ const CreateCourse = () => {
     const fetchCategories = async () => {
       try {
         const res = await axiosInstance.get("/courses");
-        const courses = res.data as { category: string }[];
+        const courses = res.data.courses as { category: string }[];
         const uniqueCategory = [...new Set(courses.map((c) => c.category))];
         setAvailableCategories(uniqueCategory);
       } catch (error) {
