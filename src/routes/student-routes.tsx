@@ -50,7 +50,7 @@ const StudentRoutes = () => {
               <Route path='/course/:id' element={<CourseDetails/>}/>
               <Route path='/tutors' element = {<Tutors/>}/>
               <Route path='/tutors/:tutorId' element= {<TutorDetails/>}/>
-              <Route path='/tutors/' element={<RequestedSessions/>}/> 
+              <Route path='/tutors/session-requests' element={<RequestedSessions/>}/> 
               {/* change the route here  */}
         </Route>
       </Route>
