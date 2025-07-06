@@ -114,14 +114,14 @@ const TutorSignup = () => {
         <input
           type="text"
           placeholder="category (e.g. Music Tutor)"
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         />
 
         <textarea
           placeholder="Bio"
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
         />
@@ -130,7 +130,7 @@ const TutorSignup = () => {
         <select
           value={skills}
           onChange={(e) => setSkills(e.target.value)}
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           required
         >
           <option value="">Select a skill</option>
@@ -144,7 +144,7 @@ const TutorSignup = () => {
         <input
           type="number"
           placeholder="Years of Experience"
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           value={experience}
           onChange={(e) => setExperience(e.target.value)}
         />

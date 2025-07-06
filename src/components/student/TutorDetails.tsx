@@ -83,7 +83,7 @@ const TutorDetails = () => {
   try {
     if (!tutor) return;
 
-    const paymentRes = await axiosInstance.post(`/payment/create-order`, {
+    const paymentRes = await axiosInstance.post(`/payments/create-order`, {
       tutor: tutor,
     });
 

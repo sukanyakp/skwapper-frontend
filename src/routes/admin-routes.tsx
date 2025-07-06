@@ -9,6 +9,7 @@ import PublicAdminRoute from "./PublicAdminRoute";
 import Courses from "@/components/admin/Courses";
 import CreateCourseForm from "@/components/admin/CreateCourseForm";
 import AdminUsers from "@/components/admin/AdminUsers";
+import Payments from "@/components/admin/adminPayments";
 // import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
 
 const AdminRoutes = () => {
@@ -28,6 +29,7 @@ const AdminRoutes = () => {
           <Route path="courses" element={<Courses/>}/>
           <Route path="courses/new" element={<CreateCourseForm/>}/>
           <Route path="students" element={<AdminUsers/>}/>
+          <Route path="payments" element={<Payments/>}/>
           {/* <ErrorBoundary> */}
           <Route path="tutors/:applicationId" element= {<AdminTutorDetails/>} />
           {/* </ErrorBoundary> */}

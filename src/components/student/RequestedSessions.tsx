@@ -1,16 +1,16 @@
 // src/pages/RequestedSessions.tsx
 import { useEffect, useState } from "react";
 import axiosInstance from "@/api/axios-instance";
-import { Link } from "react-router-dom";
+
 
 interface SessionRequest {
   _id: string;
-  tutorId: {
-    _id: string;
-    name: string;
-    profileImage: string;
-    title: string;
-  };
+  tutorId: string;
+  tutorProfile : {
+    name : string ; 
+    profileImage : string;
+  }
+  
   createdAt: string;
   status: "pending" | "accepted" | "rejected";
 }
@@ -23,7 +23,9 @@ const RequestedSessions = () => {
     const fetchRequests = async () => {
       try {
         const res = await axiosInstance.get("/user/session-requests");
-        setRequests(res.data.requests);
+        console.log(res.data ,' res.data');
+        
+        setRequests(res.data.sessions);
       } catch (error) {
         console.error("Failed to fetch session requests:", error);
       } finally {
@@ -62,15 +64,15 @@ const RequestedSessions = () => {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={req.tutorId.profileImage}
-                    alt={req.tutorId.name}
+                    src={req.tutorProfile.profileImage} // profile image . . . 
+                    alt={req.tutorProfile.name}
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <div>
                     <h2 className="text-xl font-semibold text-cyan-300">
-                      {req.tutorId.name}
+                      {req.tutorProfile.name}
                     </h2>
-                    <p className="text-sm text-gray-400">{req.tutorId.title}</p>
+                    {/* <p className="text-sm text-gray-400">{req.tutorId.title}</p> */}
                     <p className="text-xs text-gray-500 mt-1">
                       Requested on: {new Date(req.createdAt).toLocaleString()}
                     </p>
