@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/api/axios-instance";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await axiosInstance.get("/user/profile");
         console.log(res.data, 'data of user at userProfile');
-
         setProfile(res.data);
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -30,7 +31,15 @@ const UserProfile = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-12">
       <div className="max-w-2xl mx-auto bg-black/70 p-8 rounded-xl border border-gray-700 shadow-lg">
-        <h2 className="text-2xl font-bold text-cyan-400 mb-6 text-center">Your Profile</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-cyan-400">Your Profile</h2>
+          <button
+            onClick={() => navigate("/profile/edit")}
+            className="text-sm text-cyan-400 hover:underline"
+          >
+            Edit Profile
+          </button>
+        </div>
 
         {/* Profile Image */}
         <div className="flex justify-center mb-6">

@@ -22,6 +22,7 @@ import NotFound from '@/components/common/NotFound'
 import Courses from '@/components/admin/Courses'
 import CourseDetails from '@/components/courses/CourseDetails'
 import RequestedSessions from '@/components/student/RequestedSessions'
+import EditStudentProfile from '@/components/student/EditProfile'
 
 
 const StudentRoutes = () => {
@@ -44,6 +45,7 @@ const StudentRoutes = () => {
         <Route element={<StudentLayout />}>
           <Route path="/create-profile" element={<CreateProfilePage />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path='/profile/edit' element={<EditStudentProfile/>}/>
           <Route path="/apply-tutor" element={<TutorSignup />} />
           <Route path="/pending-approval" element={<PendingApproval />} />
               <Route path='/courses' element= {<AllCourses/>}/>
