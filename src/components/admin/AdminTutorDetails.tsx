@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import axiosInstance from "@/api/axios-instance";
 import { BadgeCheck, FileText, UserCircle } from "lucide-react";
+import { fetchTutorApplicationById, approveTutorApplication } from "../../api/adminApi";
 
 interface TutorApplication {
   _id: string;
@@ -28,23 +28,23 @@ const AdminTutorDetails = () => {
   useEffect(() => {
     const fetchApplication = async () => {
       try {
-        const res = await axiosInstance.get(`/admin/tutor-applications/${applicationId}`);
-        console.log(res.data ,'data');
-        
-        setApplication(res.data);
+        if (applicationId) {
+          const data = await fetchTutorApplicationById(applicationId);
+          setApplication(data);
+        }
       } catch (err) {
         console.error("Error fetching tutor details:", err);
       }
     };
-    if (applicationId) fetchApplication();
+    fetchApplication();
   }, [applicationId]);
 
   const handleApprove = async () => {
     try {
-      await axiosInstance.patch(`/admin/tutor-applications/${applicationId}/review`, {
-        action: "approved",
-      });
-      navigate("/admin/tutors");
+      if (applicationId) {
+        await approveTutorApplication(applicationId);
+        navigate("/admin/tutors");
+      }
     } catch (err) {
       console.error("Approval failed:", err);
     }

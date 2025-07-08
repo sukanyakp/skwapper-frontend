@@ -1,5 +1,3 @@
-// src/pages/admin/Payments.tsx
-
 import { useEffect, useState } from "react";
 import axiosInstance from "@/api/axios-instance";
 import Pagination from "@/components/pagination/Pagination";

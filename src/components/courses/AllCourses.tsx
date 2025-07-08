@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "@/api/axios-instance";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllCourses, getRecommendedCourses } from "../../api/courseApi";
+import { getUserProfile } from "../../api/userApi";
 
 interface Course {
   _id: string;
@@ -11,7 +12,7 @@ interface Course {
   songName: string;
   movieOrAlbum: string;
   price: number;
-  level: 'basic' | 'intermediate' | 'advanced';
+  level: "basic" | "intermediate" | "advanced";
 }
 
 interface UserProfile {
@@ -27,11 +28,12 @@ const AllCourses = () => {
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Step 1: Fetch courses and profile
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const coursesRes = await axiosInstance.get("/courses");
+        const coursesRes = await getAllCourses();
         const allCourses = coursesRes.data.courses as Course[];
         setCourses(allCourses);
 
@@ -39,7 +41,7 @@ const AllCourses = () => {
         setAvailableCategories(categories);
 
         try {
-          const profileRes = await axiosInstance.get("/user/profile");
+          const profileRes = await getUserProfile();
           const profileData = profileRes.data as UserProfile;
           setUserProfile(profileData);
 
@@ -59,7 +61,6 @@ const AllCourses = () => {
     fetchInitialData();
   }, []);
 
-  // Step 2: Fetch recommended courses
   useEffect(() => {
     const fetchRecommended = async () => {
       if (!selectedCategory) {
@@ -68,13 +69,10 @@ const AllCourses = () => {
       }
 
       try {
-        const res = await axiosInstance.get("/user/recommended-courses", {
-          params: { category: selectedCategory },
-        });
-
+        const res = await getRecommendedCourses(selectedCategory);
         const recommended = res.data as Course[];
         setFilteredCourses(recommended);
-        setSelectedLevel(""); // Reset level on new category
+        setSelectedLevel("");
       } catch (err) {
         console.error("Failed to fetch recommended:", err);
         const filtered = courses.filter(
@@ -87,10 +85,17 @@ const AllCourses = () => {
     fetchRecommended();
   }, [selectedCategory, courses]);
 
-  // Step 3: Filter by level (client-side)
   const displayedCourses = selectedLevel
     ? filteredCourses.filter((course) => course.level === selectedLevel)
     : filteredCourses;
+
+  const handleViewClick = (courseId: string) => {
+    if (!userProfile) {
+      navigate("/create-profile");
+    } else {
+      navigate(`/course/${courseId}`);
+    }
+  };
 
   if (loading) {
     return (
@@ -117,7 +122,6 @@ const AllCourses = () => {
           </div>
         )}
 
-        {/* Category Dropdown */}
         <div className="mb-6 flex justify-center">
           <select
             value={selectedCategory}
@@ -133,7 +137,6 @@ const AllCourses = () => {
           </select>
         </div>
 
-        {/* Level Filter Buttons */}
         {userProfile && filteredCourses.length > 0 && (
           <div className="flex justify-center mb-6 space-x-3">
             {["basic", "intermediate", "advanced"].map((level) => (
@@ -152,7 +155,6 @@ const AllCourses = () => {
           </div>
         )}
 
-        {/* Course Cards */}
         {displayedCourses.length === 0 ? (
           <p className="text-center text-gray-400">
             No courses found for this category.
@@ -189,25 +191,25 @@ const AllCourses = () => {
                   <p>
                     <strong>Album:</strong> {course.movieOrAlbum}
                   </p>
-                 <p>
-  <strong>Level:</strong>{" "}
-  {course.level
-    ? course.level.charAt(0).toUpperCase() + course.level.slice(1)
-    : "N/A"}
-</p>
-
+                  <p>
+                    <strong>Level:</strong>{" "}
+                    {course.level
+                      ? course.level.charAt(0).toUpperCase() +
+                        course.level.slice(1)
+                      : "N/A"}
+                  </p>
                 </div>
 
                 <div className="flex justify-between items-center mt-4">
                   <span className="text-cyan-400 font-bold">
                     ₹{course.price}
                   </span>
-                  <Link
-                    to={`/course/${course._id}`}
+                  <button
+                    onClick={() => handleViewClick(course._id)}
                     className="text-sm bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded-md transition"
                   >
                     View
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}

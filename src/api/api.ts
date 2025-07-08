@@ -23,6 +23,9 @@ export const verifyOtp = async (email:string ,otp:string) =>{
 }
 
 
+
+
+
 export const login = async(formData : object) =>{
   try {
 
@@ -85,3 +88,21 @@ export const resendOtp = async (email : string)=>{
 
 
 
+export const getAllCourseCategories = async (): Promise<string[]> => {
+  const res = await axiosInstance.get("/courses");
+  const courses = res.data.courses as { category: string }[];
+  const courseCategory = courses.map((course) => course.category);
+  return [...new Set(courseCategory)];
+};
+
+export const getUserProfile = async () => {
+  return await axiosInstance.get("/user/profile");
+};
+
+export const fetchAllCourses = async () => {
+  return await axiosInstance.get("/courses");
+}
+
+export const getTutorProfile = () => {
+  return axiosInstance.get("/tutor/profile");
+};

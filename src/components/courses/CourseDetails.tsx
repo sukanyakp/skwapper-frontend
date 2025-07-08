@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axiosInstance from "@/api/axios-instance";
+import { getCourseById } from "@/api/courseApi";
+import { createEnrollment } from "../../api/enrollementApi";
 
-interface Course {
+export interface Course {
   _id: string;
   category: string;
   description: string;
@@ -12,6 +13,11 @@ interface Course {
   movieOrAlbum: string;
   price: number;
   level: 'basic' | 'intermediate' | 'advanced';
+  tutorProfile: {
+    name: string;
+    _id: string;
+    hourlyRate: number;
+  };
 }
 
 const CourseDetails = () => {
@@ -22,10 +28,11 @@ const CourseDetails = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axiosInstance.get(`/courses/${id}`);
-        console.log(res , 'fetchCourse response');
-        
-        setCourse(res.data);
+        if (id) {
+          const res = await getCourseById(id);
+          setCourse(res);
+          console.log(res , 'res');
+        }
       } catch (error) {
         console.error("Error fetching course details:", error);
       } finally {
@@ -33,8 +40,26 @@ const CourseDetails = () => {
       }
     };
 
-    if (id) fetchCourse();
+    fetchCourse();
   }, [id]);
+
+  const handleEnrollments = async () => {
+    if (!course) return;
+
+    const tutor = {
+      ...course.tutorProfile,
+      hourlyRate: course.price, 
+    };
+
+    console.log(tutor ,'tutor at courseDetails');
+    
+
+    try {
+      await createEnrollment( tutor );
+    } catch (error) {
+      console.log("Enrollment failed:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -64,6 +89,7 @@ const CourseDetails = () => {
         <p className="text-gray-300 text-sm mb-4 italic">{course.movieOrAlbum}</p>
 
         <div className="space-y-2 text-sm text-gray-200">
+          {/* <p><strong>Tutor:</strong> {course.tutorProfile.name}</p> */}
           <p><strong>Category:</strong> {course.category}</p>
           <p><strong>Level:</strong> {course.level}</p>
           <p><strong>Language:</strong> {course.language}</p>
@@ -75,7 +101,10 @@ const CourseDetails = () => {
           <Link to="/courses" className="text-cyan-400 hover:underline">
             ← Back to Courses
           </Link>
-          <button className="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-md">
+          <button
+            onClick={handleEnrollments}
+            className="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-md"
+          >
             Enroll Now
           </button>
         </div>

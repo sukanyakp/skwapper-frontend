@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import axiosInstance from "@/api/axios-instance";
 import AdminTable from "@/components/admin/AdminTable";
 import Pagination from "@/components/pagination/Pagination";
+import { fetchTutors, toggleTutorBlockStatus } from "../../api/adminApi";
 
 interface TutorApplication {
   _id: string;
@@ -29,9 +29,9 @@ const AdminTutors = () => {
 
   const fetchApplications = async (page: number) => {
     try {
-      const res = await axiosInstance.get(`/admin/tutor-applications?page=${page}&limit=${limit}`);
-      setApplications(res.data.applications);
-      setTotalPages(res.data.totalPages);
+      const data = await fetchTutors(page, limit);
+      setApplications(data.applications);
+      setTotalPages(data.totalPages);
     } catch (err) {
       console.error("Error fetching tutor applications:", err);
       toast.error("Error loading tutors");
@@ -40,9 +40,7 @@ const AdminTutors = () => {
 
   const handleBlockToggle = async (userId: string, shouldBlock: boolean) => {
     try {
-      await axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
-        block: shouldBlock,
-      });
+      await toggleTutorBlockStatus(userId, shouldBlock);
       fetchApplications(currentPage);
     } catch (err) {
       console.error("Failed to toggle block status", err);

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import axiosInstance from "@/api/axios-instance";
 import AdminTable from "./AdminTable";
 import Pagination from "@/components/pagination/Pagination";
+import { fetchAllUsers, toggleUserBlockStatus } from "../../api/adminApi";
 
 interface User {
   _id: string;
@@ -19,14 +19,14 @@ const AdminUsers = () => {
   const limit = 5;
 
   useEffect(() => {
-    fetchUsers(currentPage);
+    loadUsers(currentPage);
   }, [currentPage]);
 
-  const fetchUsers = async (page: number) => {
+  const loadUsers = async (page: number) => {
     try {
-      const res = await axiosInstance.get(`/admin/users?page=${page}&limit=${limit}`);
-      setUsers(res.data.users);
-      setTotalPages(res.data.totalPages);
+      const data = await fetchAllUsers(page, limit);
+      setUsers(data.users);
+      setTotalPages(data.totalPages);
     } catch (err) {
       console.error("Failed to fetch users", err);
       toast.error("Error loading users");
@@ -35,10 +35,8 @@ const AdminUsers = () => {
 
   const handleBlockToggle = async (userId: string, shouldBlock: boolean) => {
     try {
-      await axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
-        block: shouldBlock,
-      });
-      fetchUsers(currentPage);
+      await toggleUserBlockStatus(userId, shouldBlock);
+      loadUsers(currentPage);
     } catch (err) {
       console.error("Failed to toggle block status", err);
       toast.error("Failed to update user status");

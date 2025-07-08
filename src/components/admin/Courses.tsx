@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import axiosInstance from "@/api/axios-instance";
 import Pagination from "@/components/pagination/Pagination";
+import { fetchAllCourses } from "../../api/adminApi"; // ✅ imported from API
 
 interface Course {
   _id: string;
@@ -22,12 +22,12 @@ const Courses = () => {
     navigate("/admin/courses/new");
   };
 
-  const fetchCourses = async (page: number) => {
+  const loadCourses = async (page: number) => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get(`/courses?page=${page}&limit=${limit}`);
-      setCourses(res.data.courses);
-      setTotalPages(res.data.totalPages);
+      const data = await fetchAllCourses(page, limit);
+      setCourses(data.courses);
+      setTotalPages(data.totalPages);
     } catch (err) {
       console.error("Error fetching courses:", err);
     } finally {
@@ -36,7 +36,7 @@ const Courses = () => {
   };
 
   useEffect(() => {
-    fetchCourses(currentPage);
+    loadCourses(currentPage);
   }, [currentPage]);
 
   return (

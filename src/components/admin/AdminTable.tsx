@@ -1,4 +1,4 @@
-// src/components/admin/AdminTable.tsx
+
 import { Button } from "@/components/ui/button";
 
 type Column<T> = {

@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store/store";
-import axiosInstance from "@/api/axios-instance";
-import { logout } from "../../store/slices/userSlice";
+import { logout } from "@/store/slices/userSlice";
+import { getUserProfile } from "../../api/api";
 
 const Navbar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -15,8 +15,10 @@ const Navbar = () => {
 
   const handleProfileRedirect = async () => {
     try {
-      const res = await axiosInstance.get("/user/profile");
-      navigate("/profile");
+      const res = await getUserProfile(); // API module
+      if (res?.data) {
+        navigate("/profile");
+      }
     } catch (err: any) {
       if (err.response?.status === 404) {
         navigate("/create-profile");
@@ -35,10 +37,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
       }
     };

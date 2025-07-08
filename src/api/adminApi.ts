@@ -1,44 +1,58 @@
+// src/api/tutorApi.ts
 import axiosInstance from "./axios-instance";
 
+export const fetchTutors = async (page: number = 1, limit: number = 5) => {
+  try {
+    const res = await axiosInstance.get(`/admin/tutor-applications?page=${page}&limit=${limit}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching tutors:", error);
+    throw error;
+  }
+};
+
+export const toggleTutorBlockStatus = async (userId: string, shouldBlock: boolean) => {
+  try {
+    return await axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
+      block: shouldBlock,
+    });
+  } catch (error) {
+    console.error("Failed to toggle block status:", error);
+    throw error;
+  }
+};
 
 
-//Request interceptor
-// export const registerAdmin = async( name :string , email : string , password : string )=>{
-//     try {
 
-//         console.log('hello registerAdmin ');
-        
-//         const res = await axiosInstance.post('/auth/register' ,{name,email,password}) // admin : role
-//         console.log('body ',res);
+export const fetchTutorApplicationById = async (id: string) => {
+  const res = await axiosInstance.get(`/admin/tutor-applications/${id}`);
+  return res.data;
+};
 
-//         return ({status : res.status ,data : res.data})
-        
-        
-//     } catch (error) {
-//         console.log(error); 
-//     }
-
-// }
-
-// export const loginAdmin = async(email : string , password : string)=>{
-//     try {
-//         const res = await axiosInstance.post('/auth/login',{email,password})
-//         localStorage.setItem('acccessToken' ,res.data.token)
-//         return({status : res.status , data : res.data})
-
-//     } catch (error) {
-//         console.log(error);  
-//     }
-// }
+export const approveTutorApplication = async (id: string) => {
+  return axiosInstance.patch(`/admin/tutor-applications/${id}/review`, {
+    action: "approved",
+  });
+};
 
 
-export const fetchTutors = ()=>{
-    try {
+export const fetchAllUsers = async (page: number, limit: number) => {
+  const res = await axiosInstance.get(`/admin/users?page=${page}&limit=${limit}`);
+  return res.data;
+};
 
-        return axiosInstance.get('/admin/tutors')
-        
-    } catch (error) {
-        console.log(error);
-        
-    }
-}
+export const toggleUserBlockStatus = async (userId: string, shouldBlock: boolean) => {
+  return axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
+    block: shouldBlock,
+  });
+};
+
+
+export const fetchAllCourses = async (page: number, limit: number) => {
+  const res = await axiosInstance.get(`/courses?page=${page}&limit=${limit}`);
+  return res.data;
+};
+
+export const createCourse = async (data: { category: string; description: string }) => {
+  return await axiosInstance.post("/courses", data);
+};

@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store/store";
-import axiosInstance from "@/api/axios-instance";
-import { logout } from "../../store/slices/tutorSlice"
+import { logout } from "../../store/slices/tutorSlice";
+import { getTutorProfile } from "../../api/api"; 
 
 const TutorNavbar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -11,7 +11,7 @@ const TutorNavbar = () => {
 
   const handleProfileRedirect = async () => {
     try {
-      const res = await axiosInstance.get("/tutor/profile");
+      await getTutorProfile(); // Use API
       navigate("/tutor/profile");
     } catch (err: any) {
       if (err.response?.status === 404) {
@@ -24,16 +24,14 @@ const TutorNavbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("token"); // Or sessionStorage based on how you store it
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
     <nav className="flex justify-between items-center px-6 py-4 border-b border-gray-700 bg-black/80 backdrop-blur-md">
-      {/* Logo */}
       <h1 className="text-2xl font-bold text-cyan-400">Skwapper</h1>
 
-      {/* Navigation Links */}
       <div className="flex items-center space-x-6 text-sm">
         <Link to="/tutor/home" className="text-gray-300 hover:text-cyan-400 transition">
           Home
