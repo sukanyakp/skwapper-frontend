@@ -1,7 +1,7 @@
-import { registerTutor, checkTutorStatus } from "@/api/tutorApi";
-import axiosInstance from "@/api/axios-instance";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { registerTutor, checkTutorStatus } from "@/api/tutorApi";
+import { getAllCourseCategories } from "../../api/api";
 
 const TutorSignup = () => {
   const [files, setFiles] = useState<FileList | null>(null);
@@ -15,15 +15,11 @@ const TutorSignup = () => {
   const [skills, setSkills] = useState("");
   const [experience, setExperience] = useState("");
 
-  // Fetch available skills from /courses
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await axiosInstance.get("/courses");
-         const courses = res.data as { category: string }[];
-        const courseCategory = courses.map((course: any) => course.category);
-        const uniquecategorys = [...new Set(courseCategory)];
-        setAvailableSkills(uniquecategorys);
+        const categories = await getAllCourseCategories(); // ✅ replaced
+        setAvailableSkills(categories);
       } catch (error) {
         console.error("Failed to fetch skills", error);
       }
@@ -31,7 +27,6 @@ const TutorSignup = () => {
     fetchSkills();
   }, []);
 
-  // Check if already applied
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -53,18 +48,14 @@ const TutorSignup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!files || files.length === 0) {
-      setMessage("Please upload required documents.");
-      return;
-    }
-
-    if (!category || !bio || !skills || !experience) {
-      setMessage("Please fill in all the fields.");
+    if (!files?.length || !category || !bio || !skills || !experience) {
+      setMessage("Please complete all fields and upload documents.");
       return;
     }
 
     try {
       setIsSubmitting(true);
+
       const statusRes = await checkTutorStatus();
       if (statusRes?.data?.hasApplied) {
         navigate("/pending-approval", { replace: true });
@@ -111,24 +102,23 @@ const TutorSignup = () => {
 
         <input
           type="text"
-          placeholder="category (e.g. Music Tutor)"
-          className="w-full p-2 rounded text-black"
+          placeholder="Category (e.g. Music Tutor)"
+          className="w-full p-2 rounded text-white"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         />
 
         <textarea
           placeholder="Bio"
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
         />
 
-        {/* Skill Dropdown */}
         <select
           value={skills}
           onChange={(e) => setSkills(e.target.value)}
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           required
         >
           <option value="">Select a skill</option>
@@ -142,7 +132,7 @@ const TutorSignup = () => {
         <input
           type="number"
           placeholder="Years of Experience"
-          className="w-full p-2 rounded text-black"
+          className="w-full p-2 rounded text-white"
           value={experience}
           onChange={(e) => setExperience(e.target.value)}
         />

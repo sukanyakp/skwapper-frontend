@@ -1,5 +1,5 @@
-import axiosInstance from "@/api/axios-instance";
 import React, { useEffect, useState } from "react";
+import { fetchAllCourses } from "../../api/api"; 
 
 interface ProfileFormProps {
   formData: any;
@@ -14,12 +14,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await axiosInstance.get("/courses"); // expects list with 'category' field
-        const courses = res.data as { category: string }[]; // type assertion
+        const res = await fetchAllCourses(); // API call
+        const courses = res.data as { category: string }[];
         const uniqueSkills = [...new Set(courses.map((course) => course.category))];
         setAvailableSkills(uniqueSkills);
-        console.log(availableSkills , 'availableskills');
-        
       } catch (error) {
         console.error("Failed to fetch skills:", error);
       }
@@ -77,7 +75,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         />
       </div>
 
-      {/* Student-specific field */}
+      {/* Student Field */}
       {role === "student" && (
         <div className="mb-4">
           <label className="block text-sm mb-1">Instrument</label>
@@ -99,10 +97,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         </div>
       )}
 
-      {/* Tutor-specific fields */}
+      {/* Tutor Fields */}
       {role === "tutor" && (
         <>
-          {/* Title */}
           <div className="mb-4">
             <label className="block text-sm mb-1">Title</label>
             <input
@@ -114,7 +111,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
             />
           </div>
 
-          {/* Skills (multi-select) */}
           <div className="mb-4">
             <label className="block text-sm mb-1">Skills</label>
             <select
@@ -144,7 +140,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         </>
       )}
 
-      {/* Experience */}
       <div className="mb-4">
         <label className="block text-sm mb-1">Experience (in years)</label>
         <input
@@ -157,7 +152,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         />
       </div>
 
-      {/* Location */}
       <div className="mb-4">
         <label className="block text-sm mb-1">Location</label>
         <input
@@ -168,7 +162,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         />
       </div>
 
-      {/* Image Upload */}
       <div className="mb-6">
         <label className="block text-sm mb-1">Profile Picture</label>
         <input
@@ -186,7 +179,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ formData, setFormData, onSubm
         )}
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
         className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 rounded-md text-white font-semibold transition"

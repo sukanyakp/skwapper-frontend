@@ -56,7 +56,7 @@ const AdminSidebar = () => {
           className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
         >
           <Book size={20} />
-          Courses
+          Category
         </Link>
 
         <Link

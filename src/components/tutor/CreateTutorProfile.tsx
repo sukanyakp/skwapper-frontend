@@ -1,38 +1,44 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "@/api/axios-instance";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { profileSchema } from "../../validations/tutor/createProfile";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
+import axiosInstance from "@/api/axios-instance";
+import { profileSchema } from "@/validations/tutor/createProfile";
 import z from "zod";
 import { toast } from "sonner";
 
+// FormData Type
 type FormData = z.infer<typeof profileSchema>;
 
 const CreateTutorProfile = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+
   const [formData, setFormData] = useState<FormData>({
-    name: "",
+    name: user?.name || "",
     bio: "",
     category: "",
     skills: [],
     experience: "",
     location: "",
-    image: new File([], "") ,
+    image: new File([], ""),
   });
 
-  const [availableSkills, setAvailableSkills] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
   useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const res = await axiosInstance.get("/courses");
-        const courses = res.data as { category: string }[];
-        const uniqueSkills = [...new Set(courses.map((course) => course.category))];
-        setAvailableSkills(uniqueSkills);
-      } catch (error) {
-        console.error("Failed to fetch skills:", error);
-      }
-    };
+const fetchSkills = async () => {
+  try {
+    const res = await axiosInstance.get("/courses");
+    const courses = res.data.courses as { category: string }[];
+
+    const uniqueSkills = [...new Set(courses.map((course) => course.category))];
+    setAvailableSkills(uniqueSkills);
+  } catch (err) {
+    console.error("Failed to fetch skills:", err);
+  }
+};
+
 
     fetchSkills();
   }, []);
@@ -45,13 +51,12 @@ const CreateTutorProfile = () => {
   };
 
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const checked = e.target.checked;
+    const { value, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       skills: checked
         ? [...prev.skills, value]
-        : prev.skills.filter((s) => s !== value),
+        : prev.skills.filter((skill) => skill !== value),
     }));
   };
 
@@ -63,7 +68,6 @@ const CreateTutorProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
       profileSchema.parse(formData);
@@ -86,13 +90,11 @@ const CreateTutorProfile = () => {
       navigate("/tutor/home");
     } catch (err) {
       if (err instanceof z.ZodError) {
-        console.error("Validation Error:", err.errors);
-        toast(err.errors[0]?.message);
+        toast.error(err.errors[0]?.message);
       } else {
-        console.error("Failed to create tutor profile:", err);
+        toast.error("Something went wrong while creating profile.");
+        console.error(err);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -112,7 +114,6 @@ const CreateTutorProfile = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
           />
         </div>
@@ -125,6 +126,7 @@ const CreateTutorProfile = () => {
             value={formData.bio}
             onChange={handleChange}
             rows={3}
+            placeholder="Tell us a bit about yourself..."
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
           />
         </div>
@@ -136,23 +138,22 @@ const CreateTutorProfile = () => {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
           />
         </div>
 
-        {/* Skills */}
+        {/* Skills Multi-Select */}
         <div className="mb-4">
-          <label className="block text-sm mb-2">Skills</label>
-          <div className="grid grid-cols-2 gap-2">
+          <label className="block text-sm mb-1">Skills</label>
+          <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 border border-gray-600 rounded-md bg-gray-800">
             {availableSkills.map((skill, idx) => (
-              <label key={idx} className="flex items-center space-x-2 text-sm">
+              <label key={idx} className="flex items-center text-sm space-x-2">
                 <input
                   type="checkbox"
                   value={skill}
                   checked={formData.skills.includes(skill)}
                   onChange={handleSkillsChange}
-                  className="accent-cyan-500"
+                  className="accent-cyan-600"
                 />
                 <span>{skill}</span>
               </label>
@@ -193,7 +194,7 @@ const CreateTutorProfile = () => {
             onChange={handleImageChange}
             className="w-full text-white"
           />
-          {formData.image && formData.image.size > 0 && (
+          {formData.image instanceof File && formData.image.size > 0 && (
             <img
               src={URL.createObjectURL(formData.image)}
               alt="Preview"
@@ -205,12 +206,9 @@ const CreateTutorProfile = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading}
-          className={`w-full py-2 rounded-md text-white font-semibold transition ${
-            loading ? "bg-cyan-400 cursor-not-allowed" : "bg-cyan-600 hover:bg-cyan-700"
-          }`}
+          className="w-full bg-cyan-600 hover:bg-cyan-700 py-2 rounded-md text-white font-semibold transition"
         >
-          {loading ? "Saving..." : "Save Profile"}
+          Save Profile
         </button>
       </form>
     </div>

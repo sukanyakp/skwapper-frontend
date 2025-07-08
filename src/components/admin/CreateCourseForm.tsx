@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "@/api/axios-instance";
 import { Button } from "@/components/ui/button";
+import { createCourse } from "../../api/adminApi"; 
 
 const CreateCourseForm = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const CreateCourseForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/courses", formData);
+      await createCourse(formData); // ✅ use API function
       navigate("/admin/courses");
     } catch (err) {
       console.error("Error creating course:", err);
@@ -46,7 +46,7 @@ const CreateCourseForm = () => {
           className="w-full p-2 border rounded"
           required
         ></textarea>
-       
+
         <Button type="submit" className="bg-cyan-600 text-white w-full">
           Create Course
         </Button>

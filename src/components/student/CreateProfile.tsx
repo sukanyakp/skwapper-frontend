@@ -26,16 +26,17 @@ const CreateStudentProfile = () => {
   });
 
   useEffect(() => {
-    const fetchInstruments = async () => {
-      try {
-        const res = await axiosInstance.get("/courses");
-        const courses = res.data as { category: string }[];
-        const uniqueCategorys = [...new Set(courses.map((course) => course.category))];
-        setAvailableInstruments(uniqueCategorys);
-      } catch (err) {
-        console.error("Failed to fetch instruments:", err);
-      }
-    };
+const fetchInstruments = async () => {
+  try {
+    const res = await axiosInstance.get("/courses");
+    const courses = res.data.courses as { category: string }[];
+
+    const uniqueCategories = [...new Set(courses.map((course) => course.category))];
+    setAvailableInstruments(uniqueCategories);
+  } catch (err) {
+    console.error("Failed to fetch instruments:", err);
+  }
+};
 
     fetchInstruments();
   }, []);

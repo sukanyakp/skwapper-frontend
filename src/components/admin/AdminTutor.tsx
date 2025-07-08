@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import axiosInstance from "@/api/axios-instance";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../../components/pagination/Pagination";
+import { toast } from "sonner";
+import AdminTable from "@/components/admin/AdminTable";
+import Pagination from "@/components/pagination/Pagination";
+import { fetchTutors, toggleTutorBlockStatus } from "../../api/adminApi";
 
 interface TutorApplication {
   _id: string;
@@ -19,7 +20,7 @@ const AdminTutors = () => {
   const [applications, setApplications] = useState<TutorApplication[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 5; // limit : : : 
+  const limit = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,31 +29,26 @@ const AdminTutors = () => {
 
   const fetchApplications = async (page: number) => {
     try {
-      const res = await axiosInstance.get(`/admin/tutor-applications?page=${page}&limit=${limit}`);
-      setApplications(res.data.applications); // expected to be `applications`
-      setTotalPages(res.data.totalPages);     // expected to be `totalPages`
-
-      console.log(res.data.applications , 'applications');
-      console.log(res.data.totalPages,'total pages');
-      
-      
+      const data = await fetchTutors(page, limit);
+      setApplications(data.applications);
+      setTotalPages(data.totalPages);
     } catch (err) {
       console.error("Error fetching tutor applications:", err);
+      toast.error("Error loading tutors");
     }
   };
 
   const handleBlockToggle = async (userId: string, shouldBlock: boolean) => {
     try {
-      await axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
-        block: shouldBlock,
-      });
+      await toggleTutorBlockStatus(userId, shouldBlock);
       fetchApplications(currentPage);
     } catch (err) {
-      console.error("Error toggling block status:", err);
+      console.error("Failed to toggle block status", err);
+      toast.error("Failed to update tutor status");
     }
   };
 
-  const getBadgeColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-800";
@@ -68,70 +64,49 @@ const AdminTutors = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">Tutor Applications</h2>
-      <div className="overflow-x-auto rounded shadow border border-gray-200 bg-white">
-        <table className="min-w-full text-sm text-left">
-          <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
-            <tr>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Email</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-800">
-            {applications.length > 0 ? (
-              applications.map((application) => (
-                <tr
-                  key={application._id}
-                  className="hover:bg-gray-50 border-t"
-                >
-                  <td
-                    className="px-6 py-4 cursor-pointer"
-                    onClick={() => navigate(`/admin/tutors/${application._id}`)}
-                  >
-                    {application.user.name}
-                  </td>
-                  <td
-                    className="px-6 py-4 cursor-pointer"
-                    onClick={() => navigate(`/admin/tutors/${application._id}`)}
-                  >
-                    {application.user.email}
-                  </td>
-                  <td
-                    className={`px-6 py-4 font-semibold ${getBadgeColor(application.status)} rounded cursor-pointer`}
-                    onClick={() => navigate(`/admin/tutors/${application._id}`)}
-                  >
-                    {application.status}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <Button
-                      size="sm"
-                      onClick={() =>
-                        handleBlockToggle(application.user._id, !application.isBlocked)
-                      }
-                      className={
-                        application.isBlocked
-                          ? "bg-yellow-500 hover:bg-yellow-600"
-                          : "bg-red-600 hover:bg-red-700"
-                      }
-                    >
-                      {application.isBlocked ? "Unblock" : "Block"}
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="text-center px-6 py-6 text-gray-500">
-                  No tutor applications found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
 
-      {/* Pagination */}
+      <AdminTable
+        data={applications}
+        columns={[
+          {
+            header: "Name",
+            render: (app) => (
+              <span
+                className="cursor-pointer text-blue-600 hover:underline"
+                onClick={() => navigate(`/admin/tutors/${app._id}`)}
+              >
+                {app.user.name}
+              </span>
+            ),
+          },
+          {
+            header: "Email",
+            render: (app) => (
+              <span
+                className="cursor-pointer text-blue-600 hover:underline"
+                onClick={() => navigate(`/admin/tutors/${app._id}`)}
+              >
+                {app.user.email}
+              </span>
+            ),
+          },
+          {
+            header: "Status",
+            render: (app) => (
+              <span
+                className={`px-2 py-1 rounded text-sm font-semibold ${getStatusBadge(app.status)}`}
+              >
+                {app.status}
+              </span>
+            ),
+          },
+        ]}
+        showBlockButton
+        onBlockToggle={(id, shouldBlock) => handleBlockToggle(id, shouldBlock)}
+        getId={(app) => app.user._id}
+        isBlocked={(app) => app.isBlocked ?? false}
+      />
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
