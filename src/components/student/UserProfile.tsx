@@ -55,7 +55,7 @@ const UserProfile = () => {
           <p><strong>Name:</strong> {profile.name}</p>
           <p><strong>Bio:</strong> {profile.bio}</p>
           <p><strong>Instrument:</strong> {profile.instrument}</p>
-          <p><strong>Experience:</strong> {profile.experience} years</p>
+          {/* <p><strong>Experience:</strong> {profile.experience} years</p> */}
           <p><strong>Location:</strong> {profile.location}</p>
         </div>
       </div>

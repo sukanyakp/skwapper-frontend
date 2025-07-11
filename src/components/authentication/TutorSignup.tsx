@@ -102,7 +102,7 @@ const TutorSignup = () => {
 
         <input
           type="text"
-          placeholder="Category (e.g. Music Tutor)"
+          placeholder="Category (e.g. Piano Tutor)"
           className="w-full p-2 rounded text-white"
           value={category}
           onChange={(e) => setCategory(e.target.value)}

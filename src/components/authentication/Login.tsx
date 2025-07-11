@@ -4,13 +4,14 @@ import { login } from "../../api/api";
 import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
 import { Input } from "../ui/input";
-import { formSchema } from "../../validations/authentication/login"; 
-import { loginSuccess } from "@/store/slices/userSlice"; 
+import { formSchema } from "../../validations/authentication/login";
+import { loginSuccess } from "@/store/slices/userSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner"; // ✅ Import toast
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,7 +29,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = formSchema.safeParse(formData); // safeParse instead of parse 
+    const result = formSchema.safeParse(formData);
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -43,25 +44,29 @@ const Login = () => {
     try {
       const response = await login(formData);
 
-      dispatch(loginSuccess({user : response?.data.user, accessToken : response?.data.token}))
-      localStorage.setItem("token" , response?.data.token)
-      localStorage.setItem("user" ,  JSON.stringify( response?.data.user))
-      console.log(response?.data.user , 'response .data. user');
-      
-      
-      if (response?.status === 200) {
-         navigate("/"); //replace true
+      if (response?.status === 200 && response.data?.user && response.data?.token) {
+        dispatch(
+          loginSuccess({
+            user: response.data.user,
+            accessToken: response.data.token,
+          })
+        );
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        navigate("/");
+      } else {
+        toast.error("Login failed. Please try again.");
       }
-    } catch (error) {
-      setErrors({ general: "Invalid email or password" });
+    } catch (error: any) {
       console.error("Login failed:", error);
+      const message = error?.response?.data?.message || "Login failed. Please try again.";
+      toast.error(message);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4 font-sans text-sm">
       <div className="w-full max-w-6xl flex flex-col md:flex-row items-center gap-8 bg-black/70 backdrop-blur-md p-8 rounded-2xl border border-gray-700 shadow-2xl">
-
         {/* Lottie Animation */}
         <div className="w-full md:w-1/2">
           <Lottie animationData={loginanime} loop={true} className="w-full h-auto max-h-[500px]" />
@@ -84,7 +89,7 @@ const Login = () => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className=" text-white" 
+                className=" text-white"
               />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
@@ -96,24 +101,17 @@ const Login = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className=" text-white" 
+                className=" text-white"
               />
               <div className="flex justify-between items-center">
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                 )}
-                <a
-                  href="/forgot-password"
-                  className="text-sx text-cyan-400 hover:underline ml-auto"
-                >
+                <a href="/forgot-password" className="text-sx text-cyan-400 hover:underline ml-auto">
                   Forgot Password?
                 </a>
               </div>
             </div>
-
-            {errors.general && (
-              <p className="text-red-500 text-xs mt-1">{errors.general}</p>
-            )}
 
             <button
               type="submit"

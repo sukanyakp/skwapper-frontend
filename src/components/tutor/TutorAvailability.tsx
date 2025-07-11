@@ -1,4 +1,3 @@
-// src/pages/TutorAvailability.tsx
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -12,21 +11,40 @@ const TutorAvailability = ({
   saveAvailability,
   loading,
 }: {
-  availability: { [key: string]: { start: string; end: string } };
+  availability: { [key: string]: Array<{ start: string; end: string }> };
   setAvailability: React.Dispatch<React.SetStateAction<any>>;
   saveAvailability: () => Promise<any>;
   loading: boolean;
-}) => { 
+}) => {
   const navigate = useNavigate();
 
-  const handleTimeChange = (day: string, field: "start" | "end", value: string) => {
+  const handleTimeChange = (day: string, index: number, field: "start" | "end", value: string) => {
+    setAvailability((prev: any) => {
+      const updated = [...(prev[day] || [])];
+      updated[index][field] = value;
+      return {
+        ...prev,
+        [day]: updated,
+      };
+    });
+  };
+
+  const addTimeSlot = (day: string) => {
     setAvailability((prev: any) => ({
       ...prev,
-      [day]: {
-        ...prev[day],
-        [field]: value,
-      },
+      [day]: [...(prev[day] || []), { start: "", end: "" }],
     }));
+  };
+
+  const removeTimeSlot = (day: string, index: number) => {
+    setAvailability((prev: any) => {
+      const updated = [...(prev[day] || [])];
+      updated.splice(index, 1);
+      return {
+        ...prev,
+        [day]: updated,
+      };
+    });
   };
 
   const handleSubmit = async () => {
@@ -44,31 +62,52 @@ const TutorAvailability = ({
 
   return (
     <div className="min-h-screen bg-gray-900 text-white py-10 px-4">
-      <div className="max-w-2xl mx-auto bg-black/70 p-6 rounded-lg border border-gray-700 shadow-md">
+      <div className="max-w-3xl mx-auto bg-black/70 p-6 rounded-lg border border-gray-700 shadow-md">
         <h2 className="text-2xl font-bold text-cyan-400 text-center mb-6">
           Set Your Weekly Availability
         </h2>
 
-        <div className="space-y-5">
+        <div className="space-y-6">
           {daysOfWeek.map((day) => (
-            <div key={day} className="flex items-center gap-3 justify-between text-sm">
-              <span className="w-24 font-medium text-gray-300">{day}</span>
+            <div key={day}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-300 font-semibold">{day}</span>
+                <button
+                  type="button"
+                  onClick={() => addTimeSlot(day)}
+                  className="text-xs text-cyan-400 hover:underline"
+                >
+                  + Add Slot
+                </button>
+              </div>
 
-              <Input
-                type="time"
-                className="w-full max-w-[150px]"
-                value={availability[day]?.start || ""}
-                onChange={(e) => handleTimeChange(day, "start", e.target.value)}
-              />
-
-              <span className="text-gray-400">to</span>
-
-              <Input
-                type="time"
-                className="w-full max-w-[150px]"
-                value={availability[day]?.end || ""}
-                onChange={(e) => handleTimeChange(day, "end", e.target.value)}
-              />
+              {(availability[day] || []).map((slot, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 justify-between mb-2 text-sm"
+                >
+                  <Input
+                    type="time"
+                    className="w-full max-w-[150px]"
+                    value={slot.start}
+                    onChange={(e) => handleTimeChange(day, index, "start", e.target.value)}
+                  />
+                  <span className="text-gray-400">to</span>
+                  <Input
+                    type="time"
+                    className="w-full max-w-[150px]"
+                    value={slot.end}
+                    onChange={(e) => handleTimeChange(day, index, "end", e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeTimeSlot(day, index)}
+                    className="text-red-500 text-xs hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
           ))}
         </div>

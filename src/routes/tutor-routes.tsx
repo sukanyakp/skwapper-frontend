@@ -11,6 +11,7 @@ import TutorRequests from "@/components/tutor/TutorRequests";
 import TutorSchedule from "@/components/tutor/TutorSchedule";
 import TutorAvailability from "@/components/tutor/TutorAvailability";
 import EnteredAvailability from "@/components/tutor/EnteredAvailability";
+import ScheduledSessions from "@/components/tutor/ScheduledSessions";
 // import TutorLayout from
 
 const TutorRoutes = () => {
@@ -30,10 +31,13 @@ const TutorRoutes = () => {
 
         <Route path="/courses" element={<MyCourses/>}/>
         <Route path="/requests" element={<TutorRequests/>}/>
-        <Route path="/schedule" element={<TutorSchedule />} />
+        <Route path="/schedule" element={<TutorSchedule />} /> 
+        {/* TutorSchedule is not needed */}
 
         <Route path="/availability" element={<TutorAvailability/>}/>
         <Route path="/availability/view" element={<EnteredAvailability/>} />
+
+        <Route path="/session-scheduled" element={<ScheduledSessions/>}/>
 
 
       </Route>

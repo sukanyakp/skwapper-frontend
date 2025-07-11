@@ -4,25 +4,28 @@ import { getCourseById } from "@/api/courseApi";
 import { createEnrollment } from "../../api/enrollementApi";
 
 export interface Course {
-  _id: string;
-  category: string;
-  description: string;
-  thumbnail: string;
-  language: string;
-  title: string;
-  movieOrAlbum: string;
-  price: number;
-  level: 'basic' | 'intermediate' | 'advanced';
-  tutorProfile: {
-    name: string;
+  data : {
     _id: string;
-    hourlyRate: number;
-  };
+    category: string;
+    description: string;
+    thumbnail: string;
+    language: string;
+    title: string;
+    movieOrAlbum: string;
+    price: number;
+    level: 'basic' | 'intermediate' | 'advanced';
+    tutorProfile: {
+      name: string;
+      _id: string;
+      hourlyRate: number;
+    };
+
+  }
 }
 
 const CourseDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const [course, setCourse] = useState<Course | null>(null);
+  const [course, setCourse] = useState<Course["data"] | null>(null); // data
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,8 +33,12 @@ const CourseDetails = () => {
       try {
         if (id) {
           const res = await getCourseById(id);
-          setCourse(res);
-          console.log(res , 'res');
+          if(res?.data){
+            setCourse(res?.data);
+            console.log(res , 'res');
+          }else{
+            setCourse(null)
+          }
         }
       } catch (error) {
         console.error("Error fetching course details:", error);
@@ -44,6 +51,8 @@ const CourseDetails = () => {
   }, [id]);
 
   const handleEnrollments = async () => {
+    console.log('handleEnroll accessed');
+    
     if (!course) return;
 
     const tutor = {

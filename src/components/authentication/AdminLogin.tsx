@@ -4,11 +4,12 @@ import { adminLoginSchema } from "../../validations/admin/adminLoginSchema";
 import { Input } from "../ui/input";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/slices/adminSlice"; // Adjust path as needed
-import { login } from "@/api/api";
+import { adminLogin } from "@/api/api";
+import { toast } from "sonner";
 
 
 export default function AdminLogin() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" ,role : "admin"});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,22 +41,26 @@ export default function AdminLogin() {
     try {
       setLoading(true);
 
-      const res = await login(formData);
+      const res = await adminLogin(formData);
+      // if(res?.data.role != 'admin'){
+      //      toast('Invalid Credentials');
+      //        navigate("/admin/login")
+      // }else{
 
-      // Store access token in localStorage
-      // localStorage.setItem("accessToken", res?.data.token);
-
-      //  Store admin info in Redux
+          //  Store admin info in Redux
       console.log(res?.data.user);
       
       dispatch(loginSuccess({admin : res?.data.user ,accessToken : res?.data.token})); // reloading issue solved
 
       console.log();
       
-
-
       // Navigate to dashboard
       navigate("/admin/dashboard");
+
+      // }
+      
+
+    
     } catch (err) {
       console.error("Login failed", err);
       setApiError("Invalid credentials");

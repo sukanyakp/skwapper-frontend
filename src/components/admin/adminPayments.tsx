@@ -5,14 +5,15 @@ import Pagination from "@/components/pagination/Pagination";
 interface Payment {
   _id: string;
   student: {
-    name : string;
+    name: string;
   };
   tutorProfile: {
-    name : string;
+    name: string;
   };
   amount: number;
-  status: "pending" | "paid";
-  paymentDate: string; //sessionDate
+  status: "pending" | "succeeded" | "failed";
+  requestStatus: "pending" | "confirmed" | "completed" | "cancelled";
+  paymentDate: string;
   sessionTime: string;
 }
 
@@ -26,11 +27,7 @@ const Payments = () => {
   const fetchPayments = async (page: number) => {
     try {
       setLoading(true);
-      console.log(page , limit);
-      
       const res = await axiosInstance.get(`/payments?page=${page}&limit=${limit}`);
-      console.log(res.data.payments ,'payments');
-      
       setPayments(res.data.payments);
       setTotalPages(res.data.totalPages);
     } catch (error) {
@@ -61,7 +58,8 @@ const Payments = () => {
                 <th className="p-3">Amount</th>
                 <th className="p-3">Session Date</th>
                 <th className="p-3">Time</th>
-                <th className="p-3">Status</th>
+                <th className="p-3">Payment Status</th>
+                <th className="p-3">Request Status</th>
               </tr>
             </thead>
             <tbody>
@@ -75,12 +73,27 @@ const Payments = () => {
                   <td className="p-3">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
-                        p.status === "paid"
+                        p.status === "succeeded"
                           ? "bg-green-100 text-green-700"
                           : "bg-yellow-100 text-yellow-700"
                       }`}
                     >
                       {p.status}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium ${
+                        p.requestStatus === "confirmed"
+                          ? "bg-blue-100 text-blue-700"
+                          : p.requestStatus === "completed"
+                          ? "bg-green-100 text-green-700"
+                          : p.requestStatus === "cancelled"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {p.requestStatus}
                     </span>
                   </td>
                 </tr>

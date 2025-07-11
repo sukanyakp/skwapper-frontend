@@ -1,4 +1,3 @@
-// src/api/tutorApi.ts
 import axiosInstance from "./axios-instance";
 
 export const fetchTutors = async (page: number = 1, limit: number = 5) => {
@@ -11,7 +10,7 @@ export const fetchTutors = async (page: number = 1, limit: number = 5) => {
   }
 };
 
-export const toggleTutorBlockStatus = async (userId: string, shouldBlock: boolean) => {
+export const toggleTutorBlockStatus = async (userId: string, shouldBlock: boolean) => {  // why we need extra api for this ? 
   try {
     return await axiosInstance.patch(`/admin/users/${userId}/block-toggle`, {
       block: shouldBlock,
