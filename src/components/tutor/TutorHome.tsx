@@ -45,6 +45,7 @@ const TutorHome: React.FC<TutorHomeProps> = ({ availability }) => {
           <ActionButton text="Edit Profile" to="/tutor/profile/edit" />
           <ActionButton text="My Courses" to="/tutor/courses" />
           <ActionButton text="View Student Requests" to="/tutor/requests" />
+          <ActionButton  text="view Scheduled sessions" to="/tutor/session-scheduled"/>
           <button
             onClick={handleAvailabilityClick}
             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-cyan-500 text-white px-5 py-3 rounded-xl shadow-md text-sm transition-transform transform hover:scale-105"

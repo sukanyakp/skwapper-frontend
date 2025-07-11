@@ -1,4 +1,3 @@
-// src/pages/EnteredAvailability.tsx
 import { useState, useEffect } from "react";
 import { withAvailability } from "../hoc/WithAvailability";
 
@@ -10,7 +9,7 @@ const EnteredAvailability = ({
   updateAvailability,
   loading,
 }: {
-  availability: { [key: string]: { start: string; end: string } };
+  availability: { [key: string]: { start: string; end: string }[] };
   setAvailability: any;
   updateAvailability: (data: any) => Promise<any>;
   loading: boolean;
@@ -22,13 +21,29 @@ const EnteredAvailability = ({
     setFormValues(availability);
   }, [availability]);
 
-  const handleChange = (day: string, field: "start" | "end", value: string) => {
-    setFormValues((prev) => ({
+  const handleSlotChange = (day: string, index: number, field: "start" | "end", value: string) => {
+    const updatedSlots = [...(formValues[day] || [])];
+    updatedSlots[index] = { ...updatedSlots[index], [field]: value };
+    setFormValues((prev: any) => ({
       ...prev,
-      [day]: {
-        ...prev[day],
-        [field]: value,
-      },
+      [day]: updatedSlots,
+    }));
+  };
+
+  const handleAddSlot = (day: string) => {
+    const updatedSlots = [...(formValues[day] || []), { start: "", end: "" }];
+    setFormValues((prev: any) => ({
+      ...prev,
+      [day]: updatedSlots,
+    }));
+  };
+
+  const handleRemoveSlot = (day: string, index: number) => {
+    const updatedSlots = [...(formValues[day] || [])];
+    updatedSlots.splice(index, 1);
+    setFormValues((prev: any) => ({
+      ...prev,
+      [day]: updatedSlots,
     }));
   };
 
@@ -52,29 +67,48 @@ const EnteredAvailability = ({
         <h1 className="text-2xl text-cyan-400 font-bold mb-6 text-center">Your Availability</h1>
 
         {daysOfWeek.map((day) => (
-          <div key={day} className="mb-4">
-            <h2 className="text-lg font-semibold text-cyan-300">{day}</h2>
-            {editing ? (
-              <div className="flex gap-4 ml-4">
-                <input
-                  type="time"
-                  value={formValues[day]?.start || ""}
-                  onChange={(e) => handleChange(day, "start", e.target.value)}
-                  className="bg-gray-800 border border-gray-600 px-2 py-1 rounded"
-                />
-                <input
-                  type="time"
-                  value={formValues[day]?.end || ""}
-                  onChange={(e) => handleChange(day, "end", e.target.value)}
-                  className="bg-gray-800 border border-gray-600 px-2 py-1 rounded"
-                />
+          <div key={day} className="mb-6">
+            <h2 className="text-lg font-semibold text-cyan-300 mb-2">{day}</h2>
+
+            {(formValues[day] || []).map((slot: any, index: number) => (
+              <div key={index} className="flex gap-4 ml-4 mb-2 items-center">
+                {editing ? (
+                  <>
+                    <input
+                      type="time"
+                      value={slot.start}
+                      onChange={(e) => handleSlotChange(day, index, "start", e.target.value)}
+                      className="bg-gray-800 border border-gray-600 px-2 py-1 rounded"
+                    />
+                    <span className="text-gray-400">to</span>
+                    <input
+                      type="time"
+                      value={slot.end}
+                      onChange={(e) => handleSlotChange(day, index, "end", e.target.value)}
+                      className="bg-gray-800 border border-gray-600 px-2 py-1 rounded"
+                    />
+                    <button
+                      onClick={() => handleRemoveSlot(day, index)}
+                      className="text-red-400 hover:text-red-600 text-xs"
+                    >
+                      Remove
+                    </button>
+                  </>
+                ) : (
+                  <p className="text-sm text-white ml-4">
+                    {slot.start} – {slot.end}
+                  </p>
+                )}
               </div>
-            ) : availability[day] ? (
-              <p className="ml-4 text-white text-sm">
-                {availability[day].start} – {availability[day].end}
-              </p>
-            ) : (
-              <p className="ml-4 text-gray-500 text-sm">Not set</p>
+            ))}
+
+            {editing && (
+              <button
+                onClick={() => handleAddSlot(day)}
+                className="ml-4 text-cyan-400 text-xs hover:underline"
+              >
+                + Add Time Slot
+              </button>
             )}
           </div>
         ))}

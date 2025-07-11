@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import AdminTable from "@/components/admin/AdminTable";
 import Pagination from "@/components/pagination/Pagination";
-import { fetchTutors, toggleTutorBlockStatus } from "../../api/adminApi";
+import { fetchTutors, toggleTutorBlockStatus, toggleUserBlockStatus } from "../../api/adminApi";
 
 interface TutorApplication {
   _id: string;
@@ -40,7 +40,9 @@ const AdminTutors = () => {
 
   const handleBlockToggle = async (userId: string, shouldBlock: boolean) => {
     try {
-      await toggleTutorBlockStatus(userId, shouldBlock);
+      console.log('handleBlockToggle l  l l     ');
+      
+      await toggleUserBlockStatus(userId, shouldBlock); //toggleTutorBlockStatus
       fetchApplications(currentPage);
     } catch (err) {
       console.error("Failed to toggle block status", err);
@@ -48,7 +50,7 @@ const AdminTutors = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getApplicationStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-800";
@@ -61,9 +63,12 @@ const AdminTutors = () => {
     }
   };
 
+  const getBlockStatusBadge = (isBlocked: boolean) =>
+    isBlocked ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700";
+
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Tutor Applications</h2>
+      <h2 className="text-2xl font-bold mb-6">Tutors Management</h2>
 
       <AdminTable
         data={applications}
@@ -91,12 +96,26 @@ const AdminTutors = () => {
             ),
           },
           {
-            header: "Status",
+            header: "Application Status",
             render: (app) => (
               <span
-                className={`px-2 py-1 rounded text-sm font-semibold ${getStatusBadge(app.status)}`}
+                className={`px-2 py-1 rounded text-sm font-semibold ${getApplicationStatusBadge(
+                  app.status
+                )}`}
               >
                 {app.status}
+              </span>
+            ),
+          },
+          {
+            header: "Block Status",
+            render: (app) => (
+              <span
+                className={`px-2 py-1 rounded text-sm font-medium ${getBlockStatusBadge(
+                  app.isBlocked ?? false
+                )}`}
+              >
+                {app.isBlocked ? "Blocked" : "Active"}
               </span>
             ),
           },
