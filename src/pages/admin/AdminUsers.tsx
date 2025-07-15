@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import AdminTable from "./AdminTable";
 import Pagination from "@/components/pagination/Pagination";
-import { fetchAllUsers, toggleUserBlockStatus } from "../../api/adminApi";
+import { fetchAllStudents, toggleUserBlockStatus } from "../../api/adminApi";
 
 interface User {
   _id: string;
@@ -16,15 +16,16 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search ,setSearch] = useState('')
   const limit = 5;
 
   useEffect(() => {
-    loadUsers(currentPage);
-  }, [currentPage]);
+    loadUsers(currentPage,search);
+  }, [currentPage,search]);
 
-  const loadUsers = async (page: number) => {
+  const loadUsers = async (page: number,search: string='') => {
     try {
-      const data = await fetchAllUsers(page, limit);
+      const data = await fetchAllStudents(page, limit ,search);
       setUsers(data.users);
       setTotalPages(data.totalPages);
     } catch (err) {
@@ -48,7 +49,20 @@ const AdminUsers = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">All Users</h2>
+      <h2 className="text-2xl font-bold mb-6">Students Management</h2>
+      <div className="mb-4 max-w-sm">
+        <input 
+        type="text"
+        placeholder="Search students by name or email..."
+        value={search}
+        onChange={(e) =>{
+          setSearch(e.target.value);
+          setCurrentPage(1);
+        }}
+        className="w-full px-4 py-2 border rounded-md text-black"
+         />
+
+      </div>
 
       <AdminTable
         data={users}

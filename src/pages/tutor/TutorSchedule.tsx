@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axiosInstance from "@/api/axios-instance";
 import { toast } from "sonner";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 
 const TutorSchedule = () => {
   const [date, setDate] = useState("");

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { withAvailability } from "../hoc/WithAvailability";
+import { withAvailability } from "../../components/hoc/WithAvailability";
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 

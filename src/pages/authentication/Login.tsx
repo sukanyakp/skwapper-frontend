@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../../api/api";
 import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { formSchema } from "../../validations/authentication/login";
 import { loginSuccess } from "@/store/slices/userSlice";
 import { useDispatch } from "react-redux";

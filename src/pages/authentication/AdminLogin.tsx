@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminLoginSchema } from "../../validations/admin/adminLoginSchema";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/slices/adminSlice"; // Adjust path as needed
 import { adminLogin } from "@/api/api";

@@ -1,4 +1,4 @@
-import type { Course } from "@/components/courses/CourseDetails";
+import type { Course } from "@/pages/courses/CourseDetails";
 import axiosInstance from "./axios-instance";
 
 

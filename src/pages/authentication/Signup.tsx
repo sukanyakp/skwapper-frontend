@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { signup } from "../../api/api";
 import Lottie from "lottie-react";
 import loginanime from "../../assets/Anime/logAnime.json";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { ClipLoader } from "react-spinners";
 import { signupSchema } from "../../validations/authentication/register";
 import { z } from "zod";

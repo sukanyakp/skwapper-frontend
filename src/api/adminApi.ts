@@ -1,8 +1,8 @@
 import axiosInstance from "./axios-instance";
 
-export const fetchTutors = async (page: number = 1, limit: number = 5) => {
+export const fetchTutors = async (page: number = 1, limit: number = 5 ,search ='') => {
   try {
-    const res = await axiosInstance.get(`/admin/tutor-applications?page=${page}&limit=${limit}`);
+    const res = await axiosInstance.get(`/admin/tutor-applications?page=${page}&limit=${limit}&search=${search}`);
     return res.data;
   } catch (error) {
     console.error("Error fetching tutors:", error);
@@ -35,8 +35,8 @@ export const approveTutorApplication = async (id: string) => {
 };
 
 
-export const fetchAllUsers = async (page: number, limit: number) => {
-  const res = await axiosInstance.get(`/admin/users?page=${page}&limit=${limit}`);
+export const fetchAllStudents = async (page: number, limit: number,search : string) => {
+  const res = await axiosInstance.get(`/admin/users?page=${page}&limit=${limit}&search=${search}`);
   return res.data;
 };
 

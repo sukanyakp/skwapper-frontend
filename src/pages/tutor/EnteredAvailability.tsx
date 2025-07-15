@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { withAvailability } from "../hoc/WithAvailability";
+import { withAvailability } from "../../components/hoc/WithAvailability";
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 

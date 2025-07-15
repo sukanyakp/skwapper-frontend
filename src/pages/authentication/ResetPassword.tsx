@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { resetPassword } from "../../api/api";
 import { resetPasswordSchema } from "../../validations/authentication/reset-password"; // update path if needed
 

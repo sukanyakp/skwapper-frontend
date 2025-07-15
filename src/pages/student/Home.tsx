@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../common/Navbar";
-import Footer from "../common/Footer";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
 import learn from "../../assets/Anime/learn.json";
 import Lottie from "lottie-react";
 import { checkApplicationStatus, checkTutorStatus } from "../../api/tutorApi"; // Adjust the path if necessary

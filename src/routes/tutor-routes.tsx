@@ -1,17 +1,17 @@
 import ProtectedRoute from "../routes/protected-routes";
 import { Route, Routes } from "react-router-dom";
-import TutorHome from "@/components/tutor/TutorHome";
-import TutorProfile from "@/components/tutor/TutorProfile";
+import TutorHome from "@/pages/tutor/TutorHome";
+import TutorProfile from "@/pages/tutor/TutorProfile";
 import TutorLayout from "@/components/layouts/TutorLayout";
-import CreateCourse from "@/components/tutor/CreateCourse";
-import CreateTutorProfile from "@/components/tutor/CreateTutorProfile";
-import EditTutorProfile from "@/components/tutor/EditTutorProfile";
-import MyCourses from "@/components/tutor/MyCourses";
-import TutorRequests from "@/components/tutor/TutorRequests";
-import TutorSchedule from "@/components/tutor/TutorSchedule";
-import TutorAvailability from "@/components/tutor/TutorAvailability";
-import EnteredAvailability from "@/components/tutor/EnteredAvailability";
-import ScheduledSessions from "@/components/tutor/ScheduledSessions";
+import CreateCourse from "@/pages/tutor/CreateCourse";
+import CreateTutorProfile from "@/pages/tutor/CreateTutorProfile";
+import EditTutorProfile from "@/pages/tutor/EditTutorProfile";
+import MyCourses from "@/pages/tutor/MyCourses";
+import TutorRequests from "@/pages/tutor/TutorRequests";
+import TutorSchedule from "@/pages/tutor/TutorSchedule";
+import TutorAvailability from "@/pages/tutor/TutorAvailability";
+import EnteredAvailability from "@/pages/tutor/EnteredAvailability";
+import ScheduledSessions from "@/pages/tutor/ScheduledSessions";
 // import TutorLayout from
 
 const TutorRoutes = () => {

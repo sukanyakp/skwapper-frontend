@@ -1,15 +1,15 @@
 import { Route, Routes } from "react-router-dom";
-import AdminLogin from "@/components/authentication/AdminLogin";
-import Dashboard from "@/components/admin/Dashboard";
-import AdminTutors from "@/components/admin/AdminTutor";
+import AdminLogin from "@/pages/authentication/AdminLogin";
+import Dashboard from "@/pages/admin/Dashboard";
+import AdminTutors from "@/pages/admin/AdminTutor";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import ProtectedAdminRoute from "../routes/ProtectedAdminRoute"
-import AdminTutorDetails from "@/components/admin/AdminTutorDetails";
+import AdminTutorDetails from "@/pages/admin/AdminTutorDetails";
 import PublicAdminRoute from "./PublicAdminRoute";
-import Courses from "@/components/admin/Courses";
-import CreateCourseForm from "@/components/admin/CreateCourseForm";
-import AdminUsers from "@/components/admin/AdminUsers";
-import Payments from "@/components/admin/adminPayments";
+import Courses from "@/pages/admin/Courses";
+import CreateCourseForm from "@/pages/admin/CreateCourseForm";
+import AdminUsers from "@/pages/admin/AdminUsers";
+import Payments from "@/pages/admin/adminPayments";
 // import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
 
 const AdminRoutes = () => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import AdminTable from "@/components/admin/AdminTable";
+import AdminTable from "@/pages/admin/AdminTable";
 import Pagination from "@/components/pagination/Pagination";
 import { fetchTutors, toggleTutorBlockStatus, toggleUserBlockStatus } from "../../api/adminApi";
 
@@ -9,27 +9,26 @@ interface TutorApplication {
   _id: string;
   status: "pending" | "approved" | "rejected";
   isBlocked?: boolean;
-  user: {
-    _id: string;
-    name: string;
-    email: string;
-  };
+  user: string;
+  name: string
+  email: string
 }
 
 const AdminTutors = () => {
   const [applications, setApplications] = useState<TutorApplication[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search ,setSearch] = useState("")
   const limit = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchApplications(currentPage);
-  }, [currentPage]);
+    fetchApplications(currentPage ,search);
+  }, [currentPage,search]);
 
-  const fetchApplications = async (page: number) => {
+  const fetchApplications = async (page: number ,search: string = "") => { // string = "" not string ?; 
     try {
-      const data = await fetchTutors(page, limit);
+      const data = await fetchTutors(page, limit,search);
       setApplications(data.applications);
       setTotalPages(data.totalPages);
     } catch (err) {
@@ -39,11 +38,9 @@ const AdminTutors = () => {
   };
 
   const handleBlockToggle = async (userId: string, shouldBlock: boolean) => {
-    try {
-      console.log('handleBlockToggle l  l l     ');
-      
+    try {  
       await toggleUserBlockStatus(userId, shouldBlock); //toggleTutorBlockStatus
-      fetchApplications(currentPage);
+      fetchApplications(currentPage,search); //search
     } catch (err) {
       console.error("Failed to toggle block status", err);
       toast.error("Failed to update tutor status");
@@ -69,6 +66,20 @@ const AdminTutors = () => {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">Tutors Management</h2>
+      <div className="mb-4 max-w-sm">
+  <input
+    type="text"
+    placeholder="Search tutors by name or email..."
+    value={search}
+    onChange={(e) => {
+      setSearch(e.target.value);
+      setCurrentPage(1); // reset to first page when searching
+    }}
+    className="w-full px-4 py-2 border rounded-md text-black"
+  />
+</div>
+
+      
 
       <AdminTable
         data={applications}
@@ -80,7 +91,7 @@ const AdminTutors = () => {
                 className="cursor-pointer text-blue-600 hover:underline"
                 onClick={() => navigate(`/admin/tutors/${app._id}`)}
               >
-                {app.user.name}
+                {app.name}
               </span>
             ),
           },
@@ -91,7 +102,7 @@ const AdminTutors = () => {
                 className="cursor-pointer text-blue-600 hover:underline"
                 onClick={() => navigate(`/admin/tutors/${app._id}`)}
               >
-                {app.user.email}
+                {app.email}
               </span>
             ),
           },
@@ -122,7 +133,7 @@ const AdminTutors = () => {
         ]}
         showBlockButton
         onBlockToggle={(id, shouldBlock) => handleBlockToggle(id, shouldBlock)}
-        getId={(app) => app.user._id}
+        getId={(app) => app._id}
         isBlocked={(app) => app.isBlocked ?? false}
       />
 

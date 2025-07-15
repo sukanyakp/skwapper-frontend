@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { sendResetRequest } from "../../api/api";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { formSchema } from "../../validations/authentication/forgot-password"; 
 // import type { FormType } from "../../validations/authentication/forgot-password";
 

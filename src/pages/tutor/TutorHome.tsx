@@ -1,12 +1,12 @@
 // src/pages/TutorHome.tsx
 import { useNavigate } from "react-router-dom";
-import { withAvailability} from "../hoc/WithAvailability";
-import type {AvailabilityData } from "../hoc/WithAvailability"
-import Footer from "../common/Footer";
-import TutorNavbar from "../common/TutorNavbar";
-import { ActionButton } from "../common/ActionButton";
-import { SummaryCard } from "../common/SummaryCard";
-import { CourseCard } from "../common/CourseCard";
+import { withAvailability} from "../../components/hoc/WithAvailability";
+import type {AvailabilityData } from "../../components/hoc/WithAvailability"
+import Footer from "../../components/common/Footer";
+import TutorNavbar from "../../components/common/TutorNavbar";
+import { ActionButton } from "../../components/common/ActionButton";
+import { SummaryCard } from "../../components/common/SummaryCard";
+import { CourseCard } from "../../components/common/CourseCard";
 
 interface TutorHomeProps {
   availability: AvailabilityData;
