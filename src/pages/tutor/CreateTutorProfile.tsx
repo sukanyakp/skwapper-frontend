@@ -6,6 +6,7 @@ import axiosInstance from "@/api/axios-instance";
 import { profileSchema } from "@/validations/tutor/createProfile";
 import z from "zod";
 import { toast } from "sonner";
+import axios from "axios";
 
 // FormData Type
 type FormData = z.infer<typeof profileSchema>;
@@ -15,6 +16,7 @@ const CreateTutorProfile = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
+  const [locating, setLocating] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     name: user?.name || "",
@@ -26,23 +28,22 @@ const CreateTutorProfile = () => {
     image: new File([], ""),
   });
 
+  // Fetch skills from course categories
   useEffect(() => {
-const fetchSkills = async () => {
-  try {
-    const res = await axiosInstance.get("/courses");
-    const courses = res.data.courses as { category: string }[];
-
-    const uniqueSkills = [...new Set(courses.map((course) => course.category))];
-    setAvailableSkills(uniqueSkills);
-  } catch (err) {
-    console.error("Failed to fetch skills:", err);
-  }
-};
-
-
+    const fetchSkills = async () => {
+      try {
+        const res = await axiosInstance.get("/courses");
+        const courses = res.data.courses as { category: string }[];
+        const uniqueSkills = [...new Set(courses.map((course) => course.category))];
+        setAvailableSkills(uniqueSkills);
+      } catch (err) {
+        console.error("Failed to fetch skills:", err);
+      }
+    };
     fetchSkills();
   }, []);
 
+  // General input change handler
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -50,6 +51,7 @@ const fetchSkills = async () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle skills checkbox
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     setFormData((prev) => ({
@@ -60,12 +62,14 @@ const fetchSkills = async () => {
     }));
   };
 
+  // Handle image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFormData((prev) => ({ ...prev, image: e.target.files![0] }));
     }
   };
 
+  // Submit form data
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -96,6 +100,42 @@ const fetchSkills = async () => {
         console.error(err);
       }
     }
+  };
+
+  // Detect location using Geolocation API and Nominatim
+  const getCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const res = await axios.get(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+          );
+          const data = res.data;
+          const address = data.display_name || "Unknown location";
+          setFormData((prev) => ({ ...prev, location: address }));
+          toast.success("Location detected successfully!");
+        } catch (error) {
+          toast.error("Failed to fetch address from coordinates.");
+          console.error(error);
+        } finally {
+          setLocating(false);
+        }
+      },
+      (error) => {
+        toast.error("Failed to detect location.");
+        console.error(error);
+        setLocating(false);
+      }
+    );
   };
 
   return (
@@ -142,7 +182,7 @@ const fetchSkills = async () => {
           />
         </div>
 
-        {/* Skills Multi-Select */}
+        {/* Skills */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Skills</label>
           <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 border border-gray-600 rounded-md bg-gray-800">
@@ -177,12 +217,22 @@ const fetchSkills = async () => {
         {/* Location */}
         <div className="mb-4">
           <label className="block text-sm mb-1">Location</label>
-          <input
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-600 text-white"
+            />
+            <button
+              type="button"
+              onClick={getCurrentLocation}
+              disabled={locating}
+              className="bg-cyan-700 hover:bg-cyan-800 text-sm px-3 py-1 rounded-md disabled:opacity-50"
+            >
+              {locating ? "Detecting..." : "Detect"}
+            </button>
+          </div>
         </div>
 
         {/* Profile Picture */}
@@ -215,4 +265,4 @@ const fetchSkills = async () => {
   );
 };
 
-export default CreateTutorProfile; 
+export default CreateTutorProfile;
