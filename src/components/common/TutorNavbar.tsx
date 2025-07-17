@@ -47,7 +47,7 @@ const TutorNavbar = () => {
           Courses
         </Link>
 
-        <Link to="/chat" className="text-gray-300 hover:text-cyan-400 transition">
+        <Link to="/tutor/chat" className="text-gray-300 hover:text-cyan-400 transition">
           Chat
         </Link>
 

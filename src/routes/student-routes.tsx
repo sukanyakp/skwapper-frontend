@@ -23,6 +23,9 @@ import Courses from '@/pages/admin/Courses'
 import CourseDetails from '@/pages/courses/CourseDetails'
 import RequestedSessions from '@/pages/student/RequestedSessions'
 import EditStudentProfile from '@/pages/student/EditProfile'
+import ChatPage from '@/pages/student/ChatPage'
+import ChatPageHistory from '@/pages/student/ChatPageHistory'
+
 
 
 const StudentRoutes = () => {
@@ -53,6 +56,8 @@ const StudentRoutes = () => {
               <Route path='/tutors' element = {<Tutors/>}/>
               <Route path='/tutors/:tutorId' element= {<TutorDetails/>}/>
               <Route path='/tutors/session-requests' element={<RequestedSessions/>}/> 
+              <Route path='/chat' element={<ChatPage/>}/>
+              <Route path='/test' element={<ChatPageHistory/>}/>
               {/* change the route here  */}
         </Route>
       </Route>

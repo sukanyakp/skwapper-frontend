@@ -12,6 +12,7 @@ import TutorSchedule from "@/pages/tutor/TutorSchedule";
 import TutorAvailability from "@/pages/tutor/TutorAvailability";
 import EnteredAvailability from "@/pages/tutor/EnteredAvailability";
 import ScheduledSessions from "@/pages/tutor/ScheduledSessions";
+import TutorChatPage from "@/pages/tutor/TutorChatPage";
 // import TutorLayout from
 
 const TutorRoutes = () => {
@@ -38,6 +39,8 @@ const TutorRoutes = () => {
         <Route path="/availability/view" element={<EnteredAvailability/>} />
 
         <Route path="/session-scheduled" element={<ScheduledSessions/>}/>
+
+        <Route path="/chat" element={<TutorChatPage/>}/>
 
 
       </Route>

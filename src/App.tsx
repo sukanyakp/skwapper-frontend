@@ -5,7 +5,7 @@ import AdminRoutes from "./routes/admin-routes";
 import { Provider } from "react-redux";
 import {store} from "./store/store";
 import TutorRoutes from "./routes/tutor-routes";
-import NotFound from "./components/common/NotFound";
+
 
 
 
